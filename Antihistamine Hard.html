@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Antihistamines Learning Objectives Quiz (50 Questions)</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fb;
+      color: #222;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 24px 28px 32px;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      margin-top: 0;
+    }
+    .meta {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    #question-number {
+      font-weight: 600;
+    }
+    #question-text {
+      font-size: 1.1rem;
+      margin: 18px 0 14px;
+    }
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .choice-btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #d0d5e5;
+      background: #f9fafc;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s, transform 0.05s;
+      font-size: 0.98rem;
+    }
+    .choice-btn:hover {
+      background: #eef2ff;
+      border-color: #b4c0ff;
+    }
+    .choice-btn.correct {
+      background: #e3f9e5;
+      border-color: #38a169;
+    }
+    .choice-btn.incorrect {
+      background: #ffe5e5;
+      border-color: #e53e3e;
+    }
+    .choice-btn.disabled {
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    #feedback {
+      min-height: 40px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.96rem;
+    }
+    #feedback.correct {
+      background: #e3f9e5;
+      border-left: 4px solid #2f855a;
+    }
+    #feedback.incorrect {
+      background: #ffe5e5;
+      border-left: 4px solid #c53030;
+    }
+    #explanation {
+      margin-top: 4px;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+    }
+    button.nav-btn {
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: #4c6fff;
+      color: white;
+      box-shadow: 0 6px 14px rgba(76,111,255,0.4);
+      transition: background 0.15s, transform 0.05s;
+    }
+    button.nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    button.nav-btn:hover:not(:disabled) {
+      background: #3b5af8;
+    }
+    button.nav-btn:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 4px 10px rgba(76,111,255,0.4);
+    }
+    #score-display {
+      font-size: 0.95rem;
+      color: #444;
+    }
+    #final-score {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+      font-weight: 600;
+      text-align: center;
+    }
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #edf2ff;
+      color: #4255ff;
+      font-size: 0.8rem;
+      margin-top: 6px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 16px;
+        padding: 18px;
+      }
+      .controls {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+      }
+      #score-display {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Antihistamines Learning Objectives Quiz</h1>
+  <div class="meta">
+    Based on EENT-ANTHIST objectives and lecture content.<br>
+    <span id="question-number"></span> · <span id="progress"></span>
+    <div class="pill">50 MCQs · Explanations after each question</div>
+  </div>
+
+  <div id="question-text"></div>
+  <div class="choices" id="choices-container"></div>
+
+  <div id="feedback">
+    <span id="feedback-label"></span>
+    <div id="explanation"></div>
+  </div>
+
+  <div class="controls">
+    <button class="nav-btn" id="prev-btn">⟵ Previous</button>
+    <div id="score-display">Score: 0 / 0</div>
+    <button class="nav-btn" id="next-btn">Next ⟶</button>
+  </div>
+
+  <div id="final-score"></div>
+</div>
+
+<script>
+  const questions = [
+    // 1 Histamine as mediator of inflammation (triple response)
+    {
+      q: "A researcher injects histamine intradermally into a volunteer’s forearm and observes a red spot, a wheal, and a surrounding flare. Which best explains histamine’s role as a mediator of inflammation in this response?",
+      choices: [
+        "It causes vasoconstriction, platelet aggregation, and local necrosis",
+        "It causes NO-mediated vasodilation, increased vascular permeability, and an axon reflex in sensory nerves",
+        "It directly activates T cells to release cytokines and cause induration",
+        "It increases fibroblast proliferation and collagen deposition at the site"
+      ],
+      correct: 1,
+      explanation:
+        "Histamine mediates the classic triple response: vasodilation (redness), increased permeability with fluid extravasation (wheal), and a neural axon reflex causing the flare and pruritus."
+    },
+    // 2 Histamine storage/release
+    {
+      q: "In which situation is histamine MOST likely to be released from mast-cell granules as part of an inflammatory response?",
+      choices: [
+        "Mild hypoglycemia during fasting",
+        "Cold-induced tissue injury with local trauma",
+        "Gradual decline in estrogen levels with aging",
+        "Daily diurnal variation in cortisol"
+      ],
+      correct: 1,
+      explanation:
+        "Histamine is stored in mast-cell granules and released in response to tissue injury (including cold/heat), microbial toxins, venoms, and immunologic triggering such as IgE-mediated reactions."
+    },
+    // 3 H1 vs H2 in allergic rhinitis
+    {
+      q: "A patient with seasonal allergic rhinitis has sneezing, rhinorrhea, and itchy eyes. These symptoms are MOST directly mediated by histamine acting at which receptor and tissue type?",
+      choices: [
+        "H1 receptors on respiratory mucosal glands and sensory nerves",
+        "H2 receptors on gastric parietal cells",
+        "H2 receptors on cardiac myocytes",
+        "H1 receptors on juxtaglomerular cells"
+      ],
+      correct: 0,
+      explanation:
+        "Allergic rhinitis symptoms are largely due to H1 activation on secretory mucosa and sensory nerves, causing mucus production, sneezing, and itching."
+    },
+    // 4 H1 role in asthma/bronchoconstriction
+    {
+      q: "In an atopic patient with asthma, histamine released in the airways contributes to bronchospasm primarily via:",
+      choices: [
+        "H2-mediated bronchodilation and increased mucus",
+        "H1-mediated bronchoconstriction of bronchial smooth muscle",
+        "H3-mediated inhibition of sympathetic outflow",
+        "H4-mediated recruitment of eosinophils in bone marrow"
+      ],
+      correct: 1,
+      explanation:
+        "Histamine acting at H1 receptors in pulmonary smooth muscle causes bronchoconstriction and decreased lung capacity, worsening asthma."
+    },
+    // 5 H2 in gastric acid secretion
+    {
+      q: "Histamine’s role in gastric acid secretion is best described as:",
+      choices: [
+        "H1-mediated stimulation of mucus cells to increase pH",
+        "H2-mediated stimulation of parietal cell proton pumps to secrete H+ into the lumen",
+        "H3-mediated inhibition of enteric neurons",
+        "H4-mediated recruitment of neutrophils to the gastric mucosa"
+      ],
+      correct: 1,
+      explanation:
+        "Histamine binding to H2 receptors on parietal cells stimulates the proton pump and increases gastric acid secretion."
+    },
+    // 6 Histamine shock/anaphylaxis
+    {
+      q: "During an anaphylactic reaction, rapid, widespread histamine release can lead to “histamine shock.” Which hemodynamic change is MOST characteristic?",
+      choices: [
+        "Systemic vasoconstriction with severe hypertension",
+        "Marked venodilation and decreased peripheral resistance causing hypotension",
+        "Pure cardiogenic shock with reduced contractility only",
+        "Isolated pulmonary hypertension without systemic changes"
+      ],
+      correct: 1,
+      explanation:
+        "Massive histamine release causes arteriolar and venous dilation, increased permeability, and a drop in peripheral resistance resulting in profound hypotension (histamine shock)."
+    },
+    // 7 Allergic disease roles (urticaria vs anaphylaxis)
+    {
+      q: "Which scenario BEST illustrates histamine’s role in urticaria compared with anaphylaxis?",
+      choices: [
+        "Urticaria involves H2 receptors only, whereas anaphylaxis involves H1 only",
+        "Urticaria produces localized wheals and flares; anaphylaxis involves systemic vasodilation and bronchoconstriction via H1 and H2 receptors",
+        "Both conditions are due exclusively to H3 receptor activation",
+        "Anaphylaxis is mediated by histamine only from basophils, while urticaria is mast-cell only"
+      ],
+      correct: 1,
+      explanation:
+        "Urticaria is a localized dermal manifestation of histamine-mediated vasodilation and permeability, whereas anaphylaxis reflects widespread H1/H2 effects on vasculature and bronchi."
+    },
+    // 8 1st gen H1 MOA
+    {
+      q: "What is the primary mechanism of action of first-generation H1 antihistamines such as diphenhydramine?",
+      choices: [
+        "Irreversible inhibition of mast-cell degranulation",
+        "Competitive antagonism of H1 receptors with additional anticholinergic, serotonin, and alpha-adrenergic blockade",
+        "Selective H2 receptor blockade in the stomach",
+        "Direct inhibition of IgE synthesis"
+      ],
+      correct: 1,
+      explanation:
+        "First-generation agents competitively antagonize H1 receptors and also block muscarinic, serotonergic, and some alpha-adrenergic receptors, accounting for their side-effect profile."
+    },
+    // 9 Diphenhydramine indications (allergic/urticaria)
+    {
+      q: "A 24-year-old with acute generalized urticaria after a bee sting receives diphenhydramine in the ED. Which is the primary rationale for using this drug?",
+      choices: [
+        "It directly stabilizes mast cells to prevent histamine release",
+        "It blocks H1 receptors in skin vasculature and sensory nerves, reducing wheals and pruritus",
+        "It blocks H2 receptors to reduce gastric acid and nausea",
+        "It irreversibly inactivates histamine in the bloodstream"
+      ],
+      correct: 1,
+      explanation:
+        "Diphenhydramine reduces urticaria and itching by blocking H1-mediated vasodilation/permeability and sensory nerve activation in the skin."
+    },
+    // 10 Meclizine/Motion sickness
+    {
+      q: "A patient with a history of vertigo and motion sickness asks for a preventive medication before a cruise. Which first-generation antihistamine is BEST suited for this indication?",
+      choices: [
+        "Meclizine",
+        "Chlorpheniramine",
+        "Cetirizine",
+        "Famotidine"
+      ],
+      correct: 0,
+      explanation:
+        "Meclizine is a first-generation H1 blocker particularly useful for motion sickness prevention and treatment of vertigo."
+    },
+    // 11 Hydroxyzine anxiety/pruritus
+    {
+      q: "A 30-year-old with generalized pruritus and anxiety is started on hydroxyzine. Which property makes hydroxyzine appropriate in this setting?",
+      choices: [
+        "Highly selective peripheral H1 blockade only",
+        "CNS penetration with H1 and anticholinergic actions that can reduce anxiety and itch perception",
+        "Potent H2 blockade that decreases gastric acid",
+        "Direct serotonin reuptake inhibition"
+      ],
+      correct: 1,
+      explanation:
+        "Hydroxyzine is a first-generation H1 blocker that penetrates the CNS and has sedative and antipruritic properties useful for anxiety and itching."
+    },
+    // 12 Promethazine BBW pediatrics
+    {
+      q: "A 1-year-old child with vomiting is brought to urgent care. The clinician considers promethazine. What is the MOST appropriate action?",
+      choices: [
+        "Prescribe promethazine at a reduced dose",
+        "Avoid promethazine because it is contraindicated in children under 2 years due to risk of fatal respiratory depression",
+        "Use promethazine but only as a rectal suppository",
+        "Combine promethazine with codeine to reduce the dose needed"
+      ],
+      correct: 1,
+      explanation:
+        "Promethazine carries a boxed warning: it is contraindicated in children <2 years because of sometimes fatal respiratory depression."
+    },
+    // 13 Promethazine tissue injury BBW
+    {
+      q: "Promethazine is ordered IV for an adult with severe nausea. Which serious risk is MOST important to consider with parenteral administration?",
+      choices: [
+        "Severe neutropenia and agranulocytosis at the injection site",
+        "Chemical irritation leading to tissue necrosis and possible gangrene",
+        "Immediate anaphylaxis in all patients",
+        "Permanent QT shortening and ventricular tachycardia"
+      ],
+      correct: 1,
+      explanation:
+        "IV/IM promethazine can cause severe chemical irritation and tissue damage, potentially resulting in necrosis and gangrene."
+    },
+    // 14 1st gen contraindications/cautions elderly
+    {
+      q: "An 80-year-old with allergic rhinitis asks about using diphenhydramine nightly for symptoms and sleep. Which concern is MOST appropriate?",
+      choices: [
+        "High risk of neutropenia",
+        "Anticholinergic-like effects increasing risk of urinary retention, falls, and confusion",
+        "Irreversible ototoxicity",
+        "Profound bradycardia in all elderly patients"
+      ],
+      correct: 1,
+      explanation:
+        "First-generation H1 blockers have strong anticholinergic and sedative effects that can worsen urinary retention, precipitate confusion, and increase fall risk in older adults."
+    },
+    // 15 1st gen contraindications (preg/lactation list)
+    {
+      q: "Which combination correctly matches a first-generation H1 antihistamine with the specific contraindication from the lecture?",
+      choices: [
+        "Doxylamine – contraindicated in coma or respiratory depression",
+        "Hydroxyzine – contraindicated in first trimester of pregnancy",
+        "Promethazine – contraindicated in lactation only",
+        "Meclizine – contraindicated in angle-closure glaucoma"
+      ],
+      correct: 1,
+      explanation:
+        "Hydroxyzine is contraindicated during the first trimester. Promethazine is contraindicated in coma/respiratory depression; doxylamine is contraindicated in lactation."
+    },
+    // 16 Anticholinergic-like effects definition
+    {
+      q: "Which constellation of symptoms BEST represents the “anticholinergic-like adverse effects” commonly seen with first-generation H1 antihistamines?",
+      choices: [
+        "Salivation, diarrhea, miosis, bradycardia",
+        "Dry mouth, blurred vision, urinary retention, tachycardia, confusion",
+        "Hyperhidrosis, lacrimation, bronchorrhea",
+        "Rigidity, bradykinesia, resting tremor"
+      ],
+      correct: 1,
+      explanation:
+        "Anticholinergic-like effects include dryness of mucosa, blurred vision, urinary retention, tachycardia, increased IOP, and possible confusion—especially problematic in elderly patients."
+    },
+    // 17 1st gen sedation MOA
+    {
+      q: "What BEST explains the sedative effects of first-generation H1 antihistamines such as diphenhydramine and promethazine?",
+      choices: [
+        "Selective peripheral H1 blockade",
+        "Inability to cross the blood–brain barrier",
+        "CNS penetration with antagonism of H1 receptors in the brain",
+        "Direct GABA agonism at the benzodiazepine site"
+      ],
+      correct: 2,
+      explanation:
+        "First-generation agents cross the blood–brain barrier and block CNS H1 receptors, causing sedation and impaired coordination."
+    },
+    // 18 1st gen vs 2nd gen effectiveness/sedation
+    {
+      q: "When comparing first- and second-generation H1 antihistamines for allergic rhinitis, which statement is MOST accurate?",
+      choices: [
+        "Second-generation agents are more sedating but less effective for allergy",
+        "First-generation agents are less effective but have fewer side effects",
+        "Both are effective for allergy, but second-generation agents cause much less sedation and fewer anticholinergic effects",
+        "Only first-generation agents block H1 receptors"
+      ],
+      correct: 2,
+      explanation:
+        "Both generations effectively treat allergic symptoms, but newer agents are designed to be less sedating and have fewer anticholinergic effects due to limited CNS penetration."
+    },
+    // 19 2nd gen MOA/peripheral selectivity
+    {
+      q: "Which feature BEST characterizes second- and third-generation H1 antihistamines such as cetirizine and fexofenadine?",
+      choices: [
+        "Nonselective H1 and muscarinic antagonism with strong CNS penetration",
+        "Selective peripheral H1 receptor blockade with minimal CNS penetration",
+        "Primary H2 receptor blockade and acid suppression",
+        "Irreversible inhibition of histamine synthesis"
+      ],
+      correct: 1,
+      explanation:
+        "Newer H1 antihistamines selectively block peripheral H1 receptors and have poor CNS penetration, minimizing sedation and anticholinergic adverse effects."
+    },
+    // 20 Cetirizine sedation vs others
+    {
+      q: "A patient reports mild drowsiness when taking cetirizine for allergic rhinitis but not with loratadine. Which is the BEST explanation?",
+      choices: [
+        "Cetirizine is a first-generation agent with strong CNS effects",
+        "Cetirizine has slightly more CNS penetration than some other second-generation agents",
+        "Loratadine is purely a topical nasal spray",
+        "Cetirizine is primarily an H2 blocker"
+      ],
+      correct: 1,
+      explanation:
+        "Cetirizine can cause mild drowsiness in some patients because it has slightly greater CNS penetration compared with loratadine or fexofenadine."
+    },
+    // 21 Fexofenadine & grapefruit juice
+    {
+      q: "A 40-year-old taking fexofenadine for chronic urticaria drinks large amounts of grapefruit juice daily. Why might this be a problem?",
+      choices: [
+        "Fexofenadine requires an acidic environment for absorption, which grapefruit juice eliminates",
+        "Grapefruit juice inactivates a transport protein important for fexofenadine disposition, reducing effectiveness",
+        "Grapefruit juice causes massive histamine release that overwhelms fexofenadine",
+        "This combination precipitates immediate torsades de pointes"
+      ],
+      correct: 1,
+      explanation:
+        "Grapefruit juice can inhibit transport proteins involved in fexofenadine’s metabolism/transport, so coadministration is discouraged due to reduced drug exposure and efficacy."
+    },
+    // 22 Desloratadine vs loratadine (metabolite idea / indication)
+    {
+      q: "A patient well-controlled on loratadine is switched to desloratadine. Which statement is MOST accurate about this change?",
+      choices: [
+        "Desloratadine is a related newer-generation H1 blocker with similar indications for allergic rhinitis and urticaria",
+        "Desloratadine is a first-generation agent and more sedating",
+        "Desloratadine lacks H1 activity and works only on H2 receptors",
+        "Desloratadine is used only for motion sickness"
+      ],
+      correct: 0,
+      explanation:
+        "Desloratadine is a newer-generation H1 antihistamine closely related to loratadine and used for similar allergic indications, with minimal sedation."
+    },
+    // 23 Meaning of "antihistamine" in practice
+    {
+      q: "In everyday clinical practice, what is MOST commonly meant by the term “antihistamine”?",
+      choices: [
+        "Any drug that affects histamine, including H1 and H2 blockers",
+        "H1 receptor antagonists used for allergic conditions such as rhinitis and urticaria",
+        "Only H2 blockers used for peptic ulcer disease",
+        "Any drug ending in “-ine,” regardless of mechanism"
+      ],
+      correct: 1,
+      explanation:
+        "Although many drugs influence histamine, clinicians usually use “antihistamine” to mean H1 blockers used for allergy symptoms."
+    },
+    // 24 Confusion with -ine suffix
+    {
+      q: "A student assumes that all drugs ending in “-ine” are antihistamines. Which example BEST illustrates why this assumption is problematic?",
+      choices: [
+        "Loratadine is not an antihistamine",
+        "Cimetidine is an antidepressant, not an antihistamine",
+        "Dopamine is not an antihistamine despite the “-ine” suffix",
+        "Fexofenadine is actually an H2 blocker"
+      ],
+      correct: 2,
+      explanation:
+        "Many medications (e.g., dopamine, clonidine) end in “-ine” but are not antihistamines, so relying on the suffix alone is misleading."
+    },
+    // 25 Azelastine nasal vs ophthalmic
+    {
+      q: "A patient with seasonal allergic conjunctivitis and rhinitis is prescribed azelastine ophthalmic drops and azelastine nasal spray. Which statement is MOST accurate?",
+      choices: [
+        "Both forms are selective peripheral H2 blockers",
+        "The ophthalmic form acts locally as a peripheral H1 blocker and mast-cell stabilizer; the nasal form has both peripheral and some central activity",
+        "Both formulations are systemic steroids",
+        "The nasal form is purely a decongestant with no antihistamine effect"
+      ],
+      correct: 1,
+      explanation:
+        "Azelastine ophthalmic (Optivar) and olopatadine products act locally as H1 blockers and mast-cell stabilizers; azelastine nasal (Astelin) also has some central activity and can cause somnolence."
+    },
+    // 26 Olopatadine indications
+    {
+      q: "Olopatadine ophthalmic (Pataday) would be MOST appropriate for which patient?",
+      choices: [
+        "A patient with peptic ulcer disease",
+        "A patient with allergic conjunctivitis and itchy, watery eyes",
+        "A patient with chronic asthma requiring bronchodilation",
+        "A patient with generalized pruritus from liver disease"
+      ],
+      correct: 1,
+      explanation:
+        "Olopatadine ophthalmic is indicated for allergic conjunctivitis, relieving itchy, watery eyes via local H1 blockade and mast-cell stabilization."
+    },
+    // 27 Nasal antihistamine adverse/monitoring
+    {
+      q: "A patient has used azelastine nasal spray daily for many months. Which adverse effect and monitoring plan are MOST appropriate to discuss?",
+      choices: [
+        "Risk of nasal septal perforation; recommend periodic nasal examination",
+        "Risk of agranulocytosis; check CBC weekly",
+        "Risk of renal failure; check serum creatinine monthly",
+        "Risk of pulmonary fibrosis; obtain annual chest X-ray"
+      ],
+      correct: 0,
+      explanation:
+        "Long-term nasal antihistamine use (azelastine/olopatadine) can rarely cause nasal septal perforation or ulcers, so regular nasal exams are recommended."
+    },
+    // 28 Nasal antihistamines common SE
+    {
+      q: "Which side effect is MOST commonly reported with nasal azelastine and olopatadine?",
+      choices: [
+        "Profound bradycardia",
+        "Bitter taste and nasal burning",
+        "Severe hepatotoxicity",
+        "Hyperkalemia"
+      ],
+      correct: 1,
+      explanation:
+        "Common adverse effects include bitter taste, nasal burning, epistaxis, headache, and occasionally somnolence and weight gain."
+    },
+    // 29 H2 blocker MOA
+    {
+      q: "Which statement BEST describes the mechanism of action of famotidine?",
+      choices: [
+        "Nonselective H1 and H2 receptor blockade",
+        "Selective H2 receptor antagonism on parietal cells to decrease gastric acid secretion",
+        "Direct inhibition of the proton pump independent of histamine",
+        "Stimulation of mucus and bicarbonate secretion only"
+      ],
+      correct: 1,
+      explanation:
+        "H2 blockers such as famotidine selectively block H2 receptors on parietal cells, reducing histamine-induced activation of the proton pump and acid secretion."
+    },
+    // 30 H2 indications
+    {
+      q: "Which clinical scenario is MOST appropriate for initiating an H2 blocker like famotidine?",
+      choices: [
+        "Acute anaphylaxis with airway compromise",
+        "Chronic allergic rhinitis",
+        "Gastroesophageal reflux disease and duodenal ulcer",
+        "Acute asthma exacerbation"
+      ],
+      correct: 2,
+      explanation:
+        "H2 blockers are indicated for gastric and duodenal ulcers, GERD, hypersecretory states, H. pylori regimens, and GI prophylaxis—not as primary therapy for allergy or asthma."
+    },
+    // 31 Ranitidine contraindication
+    {
+      q: "Ranitidine is specifically contraindicated in patients with which condition?",
+      choices: [
+        "Porphyria",
+        "Parkinson disease",
+        "Celiac disease",
+        "Hyperthyroidism"
+      ],
+      correct: 0,
+      explanation:
+        "Ranitidine is contraindicated in porphyria, a group of hereditary disorders involving toxic accumulation of porphyrins."
+    },
+    // 32 Cimetidine endocrine AEs
+    {
+      q: "A male patient on high-dose cimetidine for a hypersecretory state develops breast tenderness and galactorrhea. What is the MOST likely mechanism?",
+      choices: [
+        "Stimulation of estrogen receptors in breast tissue",
+        "Inhibition of testosterone binding to androgen receptors and interference with estrogen metabolism",
+        "Direct prolactin agonism",
+        "Unrelated coincidental pituitary tumor"
+      ],
+      correct: 1,
+      explanation:
+        "Cimetidine can cause gynecomastia and galactorrhea by interfering with androgen binding and altering sex hormone metabolism."
+    },
+    // 33 Cimetidine drug interactions
+    {
+      q: "Cimetidine is less commonly used because it strongly inhibits several CYP450 enzymes. Which consequence is MOST concerning?",
+      choices: [
+        "Reduced levels of warfarin leading to clotting",
+        "Increased levels of drugs like warfarin or phenytoin leading to toxicity",
+        "Inability to metabolize histamine itself",
+        "Complete blockade of insulin clearance"
+      ],
+      correct: 1,
+      explanation:
+        "Cimetidine inhibits multiple CYP450 isoenzymes, potentially increasing serum levels of drugs such as warfarin and phenytoin and raising toxicity risk."
+    },
+    // 34 H2 blockers & nutrient deficiencies
+    {
+      q: "A patient has been on nizatidine for many years for GERD. Which long-term adverse effect is MOST important to monitor?",
+      choices: [
+        "Iron and vitamin B12 deficiency",
+        "Calcium and vitamin D deficiency",
+        "Severe hyperkalemia",
+        "Profound neutropenia in all patients"
+      ],
+      correct: 0,
+      explanation:
+        "Chronic acid suppression with H2 blockers can impair absorption of iron and vitamin B12, leading to deficiency over time."
+    },
+    // 35 H2 blockers & elderly delirium
+    {
+      q: "An elderly patient in the ICU develops acute delirium after starting high-dose IV famotidine. Which is the BEST explanation?",
+      choices: [
+        "Famotidine is a potent CNS stimulant in all doses",
+        "H2 blockers can rarely cause CNS effects such as confusion or delirium in elderly patients, especially with IV administration",
+        "This is unrelated to famotidine",
+        "This represents anticholinergic toxicity from famotidine"
+      ],
+      correct: 1,
+      explanation:
+        "Rare CNS effects, including delirium and confusion, have been reported with H2 blockers, particularly in elderly patients receiving IV therapy."
+    },
+    // 36 Antihistamines vs H2 for anaphylaxis adjunct
+    {
+      q: "In the management of anaphylaxis, H1 and H2 antihistamines are used as adjuncts. Which statement is MOST accurate?",
+      choices: [
+        "They replace epinephrine as first-line therapy",
+        "They help relieve cutaneous and GI symptoms but do not reverse airway obstruction or shock as rapidly as epinephrine",
+        "They directly reverse bronchospasm as potent bronchodilators",
+        "They prevent all future episodes of anaphylaxis"
+      ],
+      correct: 1,
+      explanation:
+        "Epinephrine is first-line. H1 and H2 blockers are adjunctive, improving hives, itching, and some GI symptoms but not rapidly reversing airway edema or hypotension."
+    },
+    // 37 Anticholinergic implications in BPH
+    {
+      q: "A 72-year-old man with benign prostatic hyperplasia and allergic rhinitis requests an OTC sedating antihistamine. Which is the BEST counseling point?",
+      choices: [
+        "First-generation agents may worsen urinary retention and should generally be avoided",
+        "Second-generation agents are contraindicated in BPH",
+        "Diphenhydramine improves urinary flow and is preferred",
+        "All H1 antihistamines have identical urologic effects"
+      ],
+      correct: 0,
+      explanation:
+        "Anticholinergic-like adverse effects of first-generation H1 blockers can precipitate urinary retention in BPH and should be used cautiously or avoided."
+    },
+    // 38 Elderly & fall risk
+    {
+      q: "An elderly woman with glaucoma and a history of falls is taking chlorpheniramine for seasonal allergies. Which alternative is MOST appropriate to minimize risk?",
+      choices: [
+        "Switch to loratadine",
+        "Increase dose of chlorpheniramine at night",
+        "Add promethazine for more symptom control",
+        "Switch to hydroxyzine"
+      ],
+      correct: 0,
+      explanation:
+        "A second-generation agent like loratadine is preferred in older adults to reduce sedation, anticholinergic burden, and fall risk."
+    },
+    // 39 Asthma & H1 antihistamine limitation
+    {
+      q: "A patient with mild persistent asthma asks whether switching from loratadine to diphenhydramine will better control her asthma symptoms. Which response is MOST appropriate?",
+      choices: [
+        "Yes, first-generation H1 blockers are first-line controllers in asthma",
+        "No, H1 antihistamines do not replace inhaled anti-inflammatory therapy in asthma and may thicken bronchial secretions",
+        "Yes, diphenhydramine is a potent bronchodilator",
+        "Either agent is equally effective as a rescue bronchodilator"
+      ],
+      correct: 1,
+      explanation:
+        "H1 antihistamines are not primary asthma controllers; first-generation agents may worsen mucus viscosity, and asthma requires appropriate inhaled therapies."
+    },
+    // 40 Gastric acid pathophysiology & H2 role
+    {
+      q: "A patient with Zollinger–Ellison syndrome has markedly increased gastric acid output partly due to excessive histamine signaling. Which receptor subtype is most directly involved?",
+      choices: [
+        "H1 receptors on mucous neck cells",
+        "H2 receptors on parietal cells",
+        "H3 receptors in the hypothalamus",
+        "H4 receptors on eosinophils"
+      ],
+      correct: 1,
+      explanation:
+        "Hypersecretion states like Zollinger–Ellison involve increased histamine stimulation of parietal cell H2 receptors, driving acid output."
+    },
+    // 41 MCAS recognition
+    {
+      q: "A patient reports multiple episodes of flushing, hypotension, tachycardia, and GI cramping that respond to epinephrine and antihistamines. Workup suggests Mast Cell Activation Syndrome (MCAS). Which feature is MOST characteristic?",
+      choices: [
+        "Single-organ involvement with only skin symptoms",
+        "Multiple severe anaphylaxis-like events involving more than one organ system",
+        "Purely chronic urticaria without systemic symptoms",
+        "Isolated gastric acid hypersecretion"
+      ],
+      correct: 1,
+      explanation:
+        "MCAS involves recurrent, severe anaphylaxis-like episodes affecting multiple organ systems and responsive to mediator- and mast-cell–stabilizing medications."
+    },
+    // 42 1st gen major hematologic AEs
+    {
+      q: "Which serious but rare adverse reactions have been associated with first-generation H1 blockers such as diphenhydramine and promethazine?",
+      choices: [
+        "Hemolytic anemia, agranulocytosis, and thrombocytopenia",
+        "Pulmonary fibrosis and cor pulmonale",
+        "Fulminant hepatic failure and cirrhosis",
+        "Nephrotic syndrome and renal papillary necrosis"
+      ],
+      correct: 0,
+      explanation:
+        "Major adverse reactions listed include hemolytic anemia, agranulocytosis, and thrombocytopenia, though they are rare."
+    },
+    // 43 Hydroxyzine QT/torsades
+    {
+      q: "A patient with a history of prolonged QT interval is being considered for hydroxyzine for pruritus. What is the MOST appropriate consideration?",
+      choices: [
+        "Hydroxyzine shortens the QT interval and is safe in this setting",
+        "Hydroxyzine can prolong the QT interval and has been associated with torsades de pointes",
+        "QT effects are only seen with H2 blockers",
+        "Switching to promethazine eliminates QT risk"
+      ],
+      correct: 1,
+      explanation:
+        "Hydroxyzine has been associated with QT prolongation and torsades de pointes, warranting caution in patients with known QT prolongation or other risk factors."
+    },
+    // 44 Neuroleptic malignant syndrome (promethazine)
+    {
+      q: "A hospitalized patient receiving promethazine develops fever, muscle rigidity, and altered mental status. Which rare adverse effect should be considered?",
+      choices: [
+        "Serotonin syndrome",
+        "Neuroleptic malignant syndrome–like reaction",
+        "Malignant hyperthermia from anesthetics",
+        "Idiosyncratic anaphylaxis"
+      ],
+      correct: 1,
+      explanation:
+        "Promethazine has been associated with neuroleptic malignant syndrome–like reactions, manifesting as fever, rigidity, and altered consciousness."
+    },
+    // 45 Antihistamine term vs H2 blockers confusion
+    {
+      q: "A colleague prescribes “an antihistamine” for peptic ulcer disease and means famotidine. Why might this terminology be confusing to patients?",
+      choices: [
+        "Most patients think famotidine is a steroid",
+        "Clinically, “antihistamine” usually refers to H1 blockers used for allergy, whereas famotidine is an H2 blocker used for acid suppression",
+        "Famotidine has no effect on histamine receptors",
+        "H2 blockers are never considered antihistamines mechanistically"
+      ],
+      correct: 1,
+      explanation:
+        "The term “antihistamine” in everyday practice typically refers to H1 allergy drugs; using it for H2 blockers can confuse patients about indication and expected effects."
+    },
+    // 46 Practical OTC counseling 1st vs 2nd gen
+    {
+      q: "A 25-year-old truck driver with allergies asks which OTC agent will relieve symptoms without making him drowsy while driving. Which is the BEST recommendation?",
+      choices: [
+        "Diphenhydramine at bedtime and before each shift",
+        "Chlorpheniramine three times daily",
+        "Loratadine once daily in the morning",
+        "Promethazine as needed for congestion"
+      ],
+      correct: 2,
+      explanation:
+        "Second-generation H1 blockers like loratadine are preferred for allergy in individuals who must avoid sedation, such as drivers or machine operators."
+    },
+    // 47 Practical dose/route: H2 oral vs IV
+    {
+      q: "In an ICU patient on mechanical ventilation, famotidine is ordered for GI prophylaxis. Which route and dosing consideration is MOST appropriate?",
+      choices: [
+        "IV or enteral administration, with dose adjustment in renal impairment",
+        "Only intranasal administration is effective",
+        "IM famotidine is first-line for anaphylaxis",
+        "Once-weekly depot injection is recommended"
+      ],
+      correct: 0,
+      explanation:
+        "Famotidine is commonly given IV or orally/enterally; dose adjustments are recommended in renal impairment and in elderly patients."
+    },
+    // 48 Mechanism of sedation difference explanation
+    {
+      q: "Which statement BEST explains why second-generation H1 antihistamines cause less sedation than first-generation agents?",
+      choices: [
+        "They are dosed at night only",
+        "They have lower affinity for H1 receptors",
+        "They are more polar and do not significantly cross the blood–brain barrier",
+        "They activate H3 receptors to promote wakefulness"
+      ],
+      correct: 2,
+      explanation:
+        "Second-generation H1 blockers are more polar and largely excluded from the CNS, so they have minimal central H1 blockade and less sedation."
+    },
+    // 49 Elderly polypharmacy & Beers criteria–type concept
+    {
+      q: "An 82-year-old woman taking multiple medications (including oxybutynin and amitriptyline) asks to add doxylamine for sleep. What is the BEST pharmacotherapeutic concern?",
+      choices: [
+        "Risk of serotonin syndrome",
+        "Additive anticholinergic burden increasing confusion, constipation, urinary retention, and fall risk",
+        "Reduced efficacy of oxybutynin",
+        "Complete loss of antihypertensive effect of her ACE inhibitor"
+      ],
+      correct: 1,
+      explanation:
+        "Adding a strongly anticholinergic first-generation antihistamine to other anticholinergic drugs increases cumulative risk of delirium, constipation, urinary retention, and falls in older adults."
+    },
+    // 50 Histamine CNS neurotransmitter role
+    {
+      q: "Which CNS effect of histamine is most relevant when considering the sedative impact of H1 antihistamines?",
+      choices: [
+        "Histamine acts as a wake-promoting neurotransmitter; blocking CNS H1 receptors reduces arousal",
+        "Histamine only mediates pain in the spinal cord",
+        "Histamine regulates only motor function in the basal ganglia",
+        "Histamine has no role in the CNS"
+      ],
+      correct: 0,
+      explanation:
+        "Histamine functions as a limited but important CNS neurotransmitter in wakefulness; central H1 blockade by first-generation antihistamines reduces arousal and promotes sedation."
+    }
+  ];
+
+  let currentIndex = 0;
+  let score = 0;
+  let answeredCount = 0;
+  const userAnswers = new Array(questions.length).fill(null);
+
+  const questionNumberEl = document.getElementById("question-number");
+  const progressEl = document.getElementById("progress");
+  const questionTextEl = document.getElementById("question-text");
+  const choicesContainer = document.getElementById("choices-container");
+  const feedbackEl = document.getElementById("feedback");
+  const feedbackLabelEl = document.getElementById("feedback-label");
+  const explanationEl = document.getElementById("explanation");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const scoreDisplay = document.getElementById("score-display");
+  const finalScoreEl = document.getElementById("final-score");
+
+  function renderQuestion(index) {
+    const q = questions[index];
+    questionNumberEl.textContent = `Question ${index + 1} of ${questions.length}`;
+    progressEl.textContent = `Completed: ${answeredCount}/${questions.length}`;
+    questionTextEl.textContent = q.q;
+    choicesContainer.innerHTML = "";
+    feedbackEl.className = "";
+    feedbackLabelEl.textContent = "";
+    explanationEl.textContent = "";
+
+    q.choices.forEach((choice, i) => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn";
+      btn.textContent = String.fromCharCode(65 + i) + ". " + choice;
+      btn.addEventListener("click", () => handleAnswer(i));
+      choicesContainer.appendChild(btn);
+    });
+
+    const prevAnswer = userAnswers[index];
+    if (prevAnswer !== null) {
+      showResult(prevAnswer, false);
+    }
+
+    prevBtn.disabled = index === 0;
+    nextBtn.textContent = index === questions.length - 1 ? "Finish ⟶" : "Next ⟶";
+  }
+
+  function handleAnswer(selectedIndex) {
+    if (userAnswers[currentIndex] !== null) return;
+    userAnswers[currentIndex] = selectedIndex;
+    answeredCount++;
+    if (selectedIndex === questions[currentIndex].correct) {
+      score++;
+    }
+    showResult(selectedIndex, true);
+    updateScoreDisplay();
+    if (answeredCount === questions.length) {
+      showFinalScore();
+    }
+  }
+
+  function showResult(selectedIndex, animate) {
+    const q = questions[currentIndex];
+    const buttons = Array.from(document.getElementsByClassName("choice-btn"));
+    buttons.forEach((btn, i) => {
+      btn.classList.add("disabled");
+      if (i === q.correct) {
+        btn.classList.add("correct");
+      }
+      if (i === selectedIndex && i !== q.correct) {
+        btn.classList.add("incorrect");
+      }
+    });
+    const wasCorrect = selectedIndex === q.correct;
+    feedbackEl.className = wasCorrect ? "correct" : "incorrect";
+    feedbackLabelEl.textContent = wasCorrect ? "Correct!" : "Incorrect.";
+    explanationEl.textContent = q.explanation;
+  }
+
+  function updateScoreDisplay() {
+    scoreDisplay.textContent = `Score: ${score} / ${answeredCount}`;
+  }
+
+  function showFinalScore() {
+    const percent = Math.round((score / questions.length) * 100);
+    finalScoreEl.textContent = `Final score: ${score} / ${questions.length} (${percent}%)`;
+  }
+
+  prevBtn.addEventListener("click", () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      renderQuestion(currentIndex);
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (currentIndex < questions.length - 1) {
+      currentIndex++;
+      renderQuestion(currentIndex);
+    } else {
+      showFinalScore();
+      finalScoreEl.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
+  renderQuestion(currentIndex);
+  updateScoreDisplay();
+</script>
+</body>
+</html>
