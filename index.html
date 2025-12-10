@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PA School Quiz Hub</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 700px;
+      padding: 32px 28px;
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(15,23,42,0.7);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+    h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 2rem;
+      text-align: center;
+    }
+    p.subtitle {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: #cbd5f5;
+      font-size: 0.95rem;
+    }
+    .quiz-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .quiz-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: left;
+      background: #1e293b;
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 0.98rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.6);
+    }
+    .quiz-btn:hover {
+      background: #334155;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(15,23,42,0.8);
+    }
+    .quiz-title {
+      font-weight: 600;
+    }
+    .quiz-meta {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    .arrow {
+      font-size: 1.2rem;
+      margin-left: 8px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 12px;
+        padding: 22px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Pharm Quiz Hub</h1>
+    <p class="subtitle">Select a quiz below to begin. Perfect for quick review before exams.</p>
+
+    <div class="quiz-list">
+      <!-- Quiz 1 -->
+      <button class="quiz-btn" onclick="window.location.href='antihistaminesEasy.html'">
+        <div>
+          <div class="quiz-title">Antihistamines – General Mechanisms Quiz</div>
+          <div class="quiz-meta">45 questions · H1/H2 physiology, clinical uses, anaphylaxis</div>
+        </div>
+        <span class="arrow">➜</span>
+      </button>
+
+      <!-- Quiz 2 -->
+      <button class="quiz-btn" onclick="window.location.href='antihistaminesHard.html'">
+        <div>
+          <div class="quiz-title">Antihistamines – Objective-Based Quiz</div>
+          <div class="quiz-meta">50 questions · Aligned to EENT-ANTHIST objectives</div>
+        </div>
+        <span class="arrow">➜</span>
+      </button>
+
+      <!-- You can add more quizzes here later -->
+    </div>
