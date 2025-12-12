@@ -2,1139 +2,525 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Oropharynx & Larynx Quiz</title>
-  <link rel="stylesheet" href="quiz.css" />
+  <title>EENT – Disorders of the Oropharynx & Larynx Quiz</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    .container {
+      max-width: 900px;
+      margin: 36px auto;
+      padding: 24px 28px 32px;
+      background: #020617;
+      border-radius: 16px;
+      box-shadow: 0 18px 45px rgba(15,23,42,0.85);
+      border: 1px solid #1f2937;
+    }
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 2rem;
+    }
+    .meta {
+      text-align: center;
+      margin-bottom: 12px;
+      color: #9ca3af;
+      font-size: 0.95rem;
+    }
+    #question-number {
+      font-weight: 600;
+    }
+    #question-text {
+      font-size: 1.05rem;
+      margin: 18px 0 14px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .choice-btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #020617;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s, transform 0.05s, box-shadow 0.15s;
+      font-size: 0.97rem;
+      color: #e5e7eb;
+      box-shadow: 0 8px 20px rgba(15,23,42,0.75);
+    }
+    .choice-btn:hover {
+      background: #111827;
+      border-color: #4b5563;
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(15,23,42,0.9);
+    }
+    .choice-btn.correct {
+      background: #064e3b;
+      border-color: #34d399;
+    }
+    .choice-btn.incorrect {
+      background: #7f1d1d;
+      border-color: #f87171;
+    }
+    .choice-btn.disabled {
+      pointer-events: none;
+      opacity: 0.96;
+    }
+    #feedback {
+      min-height: 40px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.96rem;
+      background: #020617;
+      border-left: 4px solid transparent;
+    }
+    #feedback.correct {
+      border-left-color: #22c55e;
+      background: rgba(22,163,74,0.12);
+    }
+    #feedback.incorrect {
+      border-left-color: #f97373;
+      background: rgba(185,28,28,0.14);
+    }
+    #explanation {
+      margin-top: 4px;
+      color: #d1d5db;
+      white-space: pre-wrap;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button.nav-btn {
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: #4c6fff;
+      color: white;
+      box-shadow: 0 8px 20px rgba(37,99,235,0.7);
+      transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    button.nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    button.nav-btn:hover:not(:disabled) {
+      background: #3b5af8;
+    }
+    button.nav-btn:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 5px 14px rgba(37,99,235,0.8);
+    }
+    #score-display {
+      font-size: 0.9rem;
+      color: #cbd5f5;
+    }
+    #final-score {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #1f2937;
+      font-weight: 600;
+      text-align: center;
+      white-space: pre-wrap;
+    }
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #111827;
+      color: #a5b4fc;
+      font-size: 0.8rem;
+      margin-top: 6px;
+    }
+    @media (max-width: 640px) {
+      .container {
+        margin: 16px;
+        padding: 20px 18px 24px;
+      }
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #score-display {
+        text-align: center;
+      }
+    }
+  </style>
 </head>
+
 <body>
+<div class="container">
+  <h1>EENT – Disorders of the Oropharynx &amp; Larynx</h1>
+  <div class="meta">
+    Quiz based on the “Disorders of the Oropharynx and Larynx” lecture slides.<br>
+    <span id="question-number"></span> · <span id="progress"></span>
+    <div class="pill">50 MCQs · Sore throat, abscesses, croup, epiglottitis, hoarseness</div>
+  </div>
 
-<h1>Disorders of the Oropharynx & Larynx</h1>
+  <div id="question-text"></div>
+  <div class="choices" id="choices-container"></div>
 
-<div id="question-number"></div>
-<div id="progress"></div>
-<div id="score-display"></div>
+  <div id="feedback">
+    <span id="feedback-label"></span>
+    <div id="explanation"></div>
+  </div>
 
-<div id="question-text" style="margin-top:12px;"></div>
-<div id="choices-container" style="margin-top:10px;"></div>
+  <div class="controls">
+    <button class="nav-btn" id="prev-btn">⟵ Previous</button>
+    <div id="score-display">Score: 0 / 0</div>
+    <button class="nav-btn" id="next-btn">Next ⟶</button>
+  </div>
 
-<div id="feedback" style="margin-top:12px;">
-  <strong id="feedback-label"></strong>
+  <div id="final-score"></div>
 </div>
-<div id="explanation" style="margin-top:6px;"></div>
-
-<div style="margin-top:14px;">
-  <button id="prev-btn">⟵ Prev</button>
-  <button id="next-btn">Next ⟶</button>
-</div>
-
-<div id="final-score" style="margin-top:18px;"></div>
 
 <script>
-  // 1) QUESTIONS ARRAY (this is where your quiz content must live)
   const questions = [
-
-<!-- QUESTION 1 -->
-<div class="question">
-  <h3>Question 1</h3>
-  <p><strong>Objective(s) assessed:</strong> Differential diagnosis of acute sore throat</p>
-  <p class="objective-code">ENT-O&L-1</p>
-
-  <p><strong>Stem:</strong><br>
-  A 22-year-old college student presents with sore throat, rhinorrhea, cough, and conjunctivitis.
-  Physical exam shows mild pharyngeal erythema with scant exudate. Which diagnosis is most likely?</p>
-
-  <ul>
-    <li>A. Streptococcal pharyngitis</li>
-    <li>B. EBV pharyngitis</li>
-    <li>C. Viral pharyngitis</li>
-    <li>D. Diphtheria</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Viral pharyngitis commonly presents with URI symptoms such as cough, rhinorrhea, and conjunctivitis.
-    Streptococcal pharyngitis typically lacks cough and rhinorrhea.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 2 -->
-<div class="question">
-  <h3>Question 2</h3>
-  <p><strong>Objective(s) assessed:</strong> Viral pharyngitis management</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  A patient with uncomplicated viral pharyngitis asks for antibiotics “to speed recovery.”
-  What is the most appropriate response?</p>
-
-  <ul>
-    <li>A. Prescribe amoxicillin for 10 days</li>
-    <li>B. Prescribe azithromycin</li>
-    <li>C. Recommend supportive care only</li>
-    <li>D. Prescribe clindamycin</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Viral pharyngitis is self-limited and treated with hydration, NSAIDs, and reassurance.
-    Antibiotics provide no benefit and increase adverse effects.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 3 -->
-<div class="question">
-  <h3>Question 3</h3>
-  <p><strong>Objective(s) assessed:</strong> EBV epidemiology and presentation</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  A 19-year-old presents with fatigue, sore throat, posterior cervical lymphadenopathy, and splenomegaly.
-  Which laboratory finding most strongly supports the diagnosis?</p>
-
-  <ul>
-    <li>A. Neutrophilia</li>
-    <li>B. Lymphocytosis</li>
-    <li>C. Elevated CRP only</li>
-    <li>D. Positive rapid strep test</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    EBV infectious mononucleosis commonly causes lymphocytosis.
-    Neutrophilia is more consistent with bacterial infection.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 4 -->
-<div class="question">
-  <h3>Question 4</h3>
-  <p><strong>Objective(s) assessed:</strong> EBV diagnostic testing</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Which test is most commonly used to confirm EBV infection in a symptomatic patient?</p>
-
-  <ul>
-    <li>A. Rapid strep antigen test</li>
-    <li>B. Throat culture</li>
-    <li>C. Heterophile antibody test</li>
-    <li>D. Procalcitonin level</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    The heterophile antibody (Monospot) test is commonly used and has high specificity
-    in symptomatic patients.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 5 -->
-<div class="question">
-  <h3>Question 5</h3>
-  <p><strong>Objective(s) assessed:</strong> Streptococcal pharyngitis diagnosis</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Which clinical feature most strongly suggests streptococcal pharyngitis rather than viral pharyngitis?</p>
-
-  <ul>
-    <li>A. Cough</li>
-    <li>B. Rhinorrhea</li>
-    <li>C. Anterior cervical lymphadenopathy</li>
-    <li>D. Conjunctivitis</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Tender anterior cervical lymphadenopathy is a classic finding in GABHS pharyngitis.
-    Cough and rhinorrhea favor viral causes.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 6 -->
-<div class="question">
-  <h3>Question 6</h3>
-  <p><strong>Objective(s) assessed:</strong> Centor criteria application</p>
-  <p class="objective-code">ENT-O&L-1, ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  A 30-year-old with fever, tonsillar exudates, tender anterior cervical nodes, and no cough
-  has a Centor score of:</p>
-
-  <ul>
-    <li>A. 1</li>
-    <li>B. 2</li>
-    <li>C. 3</li>
-    <li>D. 4</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> D</p>
-  <p class="explanation">
-    Fever, tonsillar exudate, anterior cervical LAD, and absence of cough each score one point.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 7 -->
-<div class="question">
-  <h3>Question 7</h3>
-  <p><strong>Objective(s) assessed:</strong> Strep pharyngitis treatment</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  First-line treatment for confirmed streptococcal pharyngitis is:</p>
-
-  <ul>
-    <li>A. Azithromycin</li>
-    <li>B. Clindamycin</li>
-    <li>C. Penicillin or amoxicillin</li>
-    <li>D. Ceftriaxone</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Penicillin or amoxicillin for 10 days is first-line therapy for GABHS pharyngitis.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 8 -->
-<div class="question">
-  <h3>Question 8</h3>
-  <p><strong>Objective(s) assessed:</strong> Diphtheria recognition</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  A patient presents with sore throat, cervical lymphadenopathy, and a thick gray pseudomembrane.
-  What is the most concerning complication?</p>
-
-  <ul>
-    <li>A. Acute otitis media</li>
-    <li>B. Myocarditis</li>
-    <li>C. Sinusitis</li>
-    <li>D. Rheumatic fever</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Diphtheria exotoxin can cause myocarditis and peripheral neuropathy.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 9 -->
-<div class="question">
-  <h3>Question 9</h3>
-  <p><strong>Objective(s) assessed:</strong> Ludwig angina management</p>
-  <p class="objective-code">ENT-O&L-2, ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  A patient with submandibular swelling, drooling, and tongue elevation following a dental infection
-  should first receive:</p>
-
-  <ul>
-    <li>A. Oral antibiotics and discharge</li>
-    <li>B. Immediate airway assessment</li>
-    <li>C. Rapid strep testing</li>
-    <li>D. NSAIDs only</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Ludwig angina is a life-threatening deep neck infection where airway protection
-    is the top priority.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 10 -->
-<div class="question">
-  <h3>Question 10</h3>
-  <p><strong>Objective(s) assessed:</strong> Peritonsillar abscess identification</p>
-  <p class="objective-code">ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  A patient with unilateral sore throat, muffled “hot potato” voice, uvular deviation,
-  and trismus most likely has:</p>
-
-  <ul>
-    <li>A. Viral pharyngitis</li>
-    <li>B. Retropharyngeal abscess</li>
-    <li>C. Peritonsillar abscess</li>
-    <li>D. Epiglottitis</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Uvular deviation and muffled voice are classic for peritonsillar abscess.
-  </p>
-</div>
-
-<hr>
-<!-- QUESTION 16 -->
-<div class="question">
-  <h3>Question 16</h3>
-  <p><strong>Objective(s) assessed:</strong> EBV management and complications</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  A 20-year-old athlete is diagnosed with infectious mononucleosis. He asks when he can return to football.
-  What is the most appropriate guidance?</p>
-
-  <ul>
-    <li>A. Return immediately if afebrile</li>
-    <li>B. Resume contact sports after 1 week</li>
-    <li>C. Avoid contact sports for at least 4 weeks</li>
-    <li>D. Resume activity once throat pain resolves</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    EBV causes splenomegaly, increasing the risk of splenic rupture.
-    Contact sports should be avoided for at least 4 weeks.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 17 -->
-<div class="question">
-  <h3>Question 17</h3>
-  <p><strong>Objective(s) assessed:</strong> Differentiating EBV from strep</p>
-  <p class="objective-code">ENT-O&L-1, ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  A patient with pharyngitis develops a diffuse maculopapular rash after starting amoxicillin.
-  Which diagnosis best explains this reaction?</p>
-
-  <ul>
-    <li>A. Scarlet fever</li>
-    <li>B. EBV pharyngitis</li>
-    <li>C. Viral URI</li>
-    <li>D. Diphtheria</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Patients with EBV frequently develop a rash when exposed to aminopenicillins,
-    which is not a true allergy.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 18 -->
-<div class="question">
-  <h3>Question 18</h3>
-  <p><strong>Objective(s) assessed:</strong> Retropharyngeal abscess recognition</p>
-  <p class="objective-code">ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  A 3-year-old presents with fever, drooling, neck stiffness, and refusal to eat.
-  Which diagnosis is most concerning?</p>
-
-  <ul>
-    <li>A. Viral pharyngitis</li>
-    <li>B. Croup</li>
-    <li>C. Retropharyngeal abscess</li>
-    <li>D. Acute laryngitis</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Retropharyngeal abscess presents with fever, drooling, neck stiffness,
-    and is a medical emergency in children.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 19 -->
-<div class="question">
-  <h3>Question 19</h3>
-  <p><strong>Objective(s) assessed:</strong> Retropharyngeal abscess evaluation</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  What is the most sensitive imaging study to confirm retropharyngeal abscess?</p>
-
-  <ul>
-    <li>A. Ultrasound</li>
-    <li>B. Lateral neck X-ray</li>
-    <li>C. CT neck with contrast</li>
-    <li>D. MRI brain</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    CT of the neck with contrast is the most sensitive modality to identify
-    abscess location and extent.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 20 -->
-<div class="question">
-  <h3>Question 20</h3>
-  <p><strong>Objective(s) assessed:</strong> Peritonsillar abscess complications</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Untreated peritonsillar abscess may lead to which serious complication?</p>
-
-  <ul>
-    <li>A. Otitis externa</li>
-    <li>B. Carotid artery erosion</li>
-    <li>C. Sinus congestion</li>
-    <li>D. Vocal cord nodules</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    PTA can progress to sepsis or erode into the carotid artery,
-    making prompt drainage essential.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 21 -->
-<div class="question">
-  <h3>Question 21</h3>
-  <p><strong>Objective(s) assessed:</strong> Epiglottitis presentation</p>
-  <p class="objective-code">ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  A febrile child sits upright, drooling, leaning forward with a muffled voice.
-  What is the most likely diagnosis?</p>
-
-  <ul>
-    <li>A. Croup</li>
-    <li>B. Epiglottitis</li>
-    <li>C. Retropharyngeal abscess</li>
-    <li>D. Viral pharyngitis</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Tripod positioning, drooling, and muffled voice are classic for epiglottitis.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 22 -->
-<div class="question">
-  <h3>Question 22</h3>
-  <p><strong>Objective(s) assessed:</strong> Epiglottitis evaluation</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  What should be avoided when epiglottitis is suspected?</p>
-
-  <ul>
-    <li>A. Supplemental oxygen</li>
-    <li>B. IV antibiotics</li>
-    <li>C. Direct throat examination</li>
-    <li>D. ICU monitoring</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Direct visualization may provoke laryngospasm and airway obstruction.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 23 -->
-<div class="question">
-  <h3>Question 23</h3>
-  <p><strong>Objective(s) assessed:</strong> Croup recognition</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  A toddler presents with barking cough, inspiratory stridor, and symptoms worse at night.
-  What is the most likely diagnosis?</p>
-
-  <ul>
-    <li>A. Epiglottitis</li>
-    <li>B. Viral croup</li>
-    <li>C. Asthma exacerbation</li>
-    <li>D. Bronchiolitis</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Barking cough and nocturnal worsening are classic for viral croup.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 24 -->
-<div class="question">
-  <h3>Question 24</h3>
-  <p><strong>Objective(s) assessed:</strong> Croup treatment</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Which medication has been shown to reduce symptom severity in croup?</p>
-
-  <ul>
-    <li>A. Prednisone for 10 days</li>
-    <li>B. Oral dexamethasone (single dose)</li>
-    <li>C. Amoxicillin</li>
-    <li>D. Albuterol</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    A single dose of dexamethasone reduces airway inflammation and symptom severity in croup.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 25 -->
-<div class="question">
-  <h3>Question 25</h3>
-  <p><strong>Objective(s) assessed:</strong> Severe croup management</p>
-  <p class="objective-code">ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  A child with croup develops severe stridor at rest and retractions.
-  What is the next best step?</p>
-
-  <ul>
-    <li>A. Discharge home</li>
-    <li>B. Nebulized racemic epinephrine</li>
-    <li>C. Oral antibiotics</li>
-    <li>D. Chest physiotherapy</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Nebulized epinephrine is indicated in severe croup to rapidly reduce airway edema.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 26 -->
-<div class="question">
-  <h3>Question 26</h3>
-  <p><strong>Objective(s) assessed:</strong> Acute laryngitis diagnosis</p>
-  <p class="objective-code">ENT-O&L-3</p>
-
-  <p><strong>Stem:</strong><br>
-  A patient presents with hoarseness following a mild URI.
-  Laryngoscopy shows erythematous, edematous vocal cords.
-  What is the most likely diagnosis?</p>
-
-  <ul>
-    <li>A. Vocal cord paralysis</li>
-    <li>B. Acute laryngitis</li>
-    <li>C. Epiglottitis</li>
-    <li>D. Laryngeal cancer</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Acute laryngitis commonly follows viral URIs and presents with hoarseness.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 27 -->
-<div class="question">
-  <h3>Question 27</h3>
-  <p><strong>Objective(s) assessed:</strong> Acute laryngitis management</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  The best initial management for acute laryngitis is:</p>
-
-  <ul>
-    <li>A. Antibiotics</li>
-    <li>B. Vocal rest and reassurance</li>
-    <li>C. Systemic steroids</li>
-    <li>D. Surgery</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Acute laryngitis is self-limited and managed with vocal rest and reassurance.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 28 -->
-<div class="question">
-  <h3>Question 28</h3>
-  <p><strong>Objective(s) assessed:</strong> Airway foreign body risk</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Which age group is at highest risk for airway foreign body aspiration?</p>
-
-  <ul>
-    <li>A. Adolescents</li>
-    <li>B. Adults over 65</li>
-    <li>C. Children under 3 years</li>
-    <li>D. School-aged children</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Children under 3 years are at highest risk due to airway size and oral exploration behaviors.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 29 -->
-<div class="question">
-  <h3>Question 29</h3>
-  <p><strong>Objective(s) assessed:</strong> Airway foreign body presentation</p>
-  <p class="objective-code">ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  A child has sudden coughing and unilateral wheezing after eating peanuts.
-  What is the most likely location of the foreign body?</p>
-
-  <ul>
-    <li>A. Left mainstem bronchus</li>
-    <li>B. Right mainstem bronchus</li>
-    <li>C. Esophagus</li>
-    <li>D. Nasopharynx</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    The right mainstem bronchus is wider and more vertical, making it the most common site.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 30 -->
-<div class="question">
-  <h3>Question 30</h3>
-  <p><strong>Objective(s) assessed:</strong> Airway foreign body evaluation</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Initial imaging for suspected airway foreign body should include:</p>
-
-  <ul>
-    <li>A. CT chest only</li>
-    <li>B. Chest X-ray with expiratory views</li>
-    <li>C. MRI neck</li>
-    <li>D. Ultrasound</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Chest X-rays with expiratory views can show air trapping from a radiolucent foreign body.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 31 -->
-<div class="question">
-  <h3>Question 31</h3>
-  <p><strong>Objective(s) assessed:</strong> Hoarseness differential</p>
-  <p class="objective-code">ENT-O&L-3</p>
-
-  <p><strong>Stem:</strong><br>
-  A patient with hoarseness lasting longer than 3 weeks requires:</p>
-
-  <ul>
-    <li>A. Reassurance only</li>
-    <li>B. Empiric antibiotics</li>
-    <li>C. ENT referral for laryngoscopy</li>
-    <li>D. Speech therapy only</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Persistent hoarseness warrants laryngoscopic evaluation to exclude malignancy or structural disease.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 32 -->
-<div class="question">
-  <h3>Question 32</h3>
-  <p><strong>Objective(s) assessed:</strong> Ludwig angina etiology</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  The most common underlying cause of Ludwig angina is:</p>
-
-  <ul>
-    <li>A. Viral pharyngitis</li>
-    <li>B. Dental infection</li>
-    <li>C. Otitis media</li>
-    <li>D. Sinusitis</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Approximately 80% of Ludwig angina cases originate from dental infections.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 33 -->
-<div class="question">
-  <h3>Question 33</h3>
-  <p><strong>Objective(s) assessed:</strong> Ludwig angina treatment</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Appropriate empiric antibiotic therapy for Ludwig angina includes:</p>
-
-  <ul>
-    <li>A. Oral azithromycin</li>
-    <li>B. IV penicillin plus metronidazole</li>
-    <li>C. Oral amoxicillin only</li>
-    <li>D. No antibiotics</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Broad-spectrum IV antibiotics targeting anaerobes and streptococci are required.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 34 -->
-<div class="question">
-  <h3>Question 34</h3>
-  <p><strong>Objective(s) assessed:</strong> Diphtheria management</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  What is the most critical early treatment in suspected diphtheria?</p>
-
-  <ul>
-    <li>A. Wait for culture confirmation</li>
-    <li>B. Administer diphtheria antitoxin</li>
-    <li>C. Perform tonsillectomy</li>
-    <li>D. Give oral NSAIDs</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Early administration of diphtheria antitoxin reduces toxin-mediated complications.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 35 -->
-<div class="question">
-  <h3>Question 35</h3>
-  <p><strong>Objective(s) assessed:</strong> PTA evaluation</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Imaging to confirm a peritonsillar abscess typically involves:</p>
-
-  <ul>
-    <li>A. Chest X-ray</li>
-    <li>B. CT face/neck with contrast</li>
-    <li>C. MRI brain</li>
-    <li>D. Ultrasound abdomen</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    CT with contrast delineates abscess size and extension.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 36 -->
-<div class="question">
-  <h3>Question 36</h3>
-  <p><strong>Objective(s) assessed:</strong> PTA treatment principles</p>
-  <p class="objective-code">ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  Definitive management of peritonsillar abscess almost always requires:</p>
-
-  <ul>
-    <li>A. Oral antibiotics only</li>
-    <li>B. Needle aspiration or incision and drainage</li>
-    <li>C. Steroids alone</li>
-    <li>D. Observation</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Drainage is required to prevent progression and complications.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 37 -->
-<div class="question">
-  <h3>Question 37</h3>
-  <p><strong>Objective(s) assessed:</strong> Epiglottitis complications</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  The most dangerous complication of epiglottitis is:</p>
-
-  <ul>
-    <li>A. Otitis media</li>
-    <li>B. Airway obstruction</li>
-    <li>C. Chronic hoarseness</li>
-    <li>D. Sinusitis</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Sudden airway obstruction is the primary life-threatening risk.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 38 -->
-<div class="question">
-  <h3>Question 38</h3>
-  <p><strong>Objective(s) assessed:</strong> Epiglottitis antibiotic therapy</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  After airway stabilization, appropriate antibiotics for epiglottitis include:</p>
-
-  <ul>
-    <li>A. Amoxicillin only</li>
-    <li>B. Third-generation cephalosporin plus vancomycin</li>
-    <li>C. Azithromycin only</li>
-    <li>D. Clindamycin only</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Broad IV coverage is required due to potential resistant organisms.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 39 -->
-<div class="question">
-  <h3>Question 39</h3>
-  <p><strong>Objective(s) assessed:</strong> Chronic laryngitis etiology</p>
-  <p class="objective-code">ENT-O&L-3</p>
-
-  <p><strong>Stem:</strong><br>
-  The most common cause of chronic laryngitis is:</p>
-
-  <ul>
-    <li>A. Viral infection</li>
-    <li>B. Smoking</li>
-    <li>C. Bacterial infection</li>
-    <li>D. Vocal abuse</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Chronic exposure to irritants, especially smoking, leads to irreversible laryngeal changes.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 40 -->
-<div class="question">
-  <h3>Question 40</h3>
-  <p><strong>Objective(s) assessed:</strong> Croup severity assessment</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Which finding indicates severe croup?</p>
-
-  <ul>
-    <li>A. Barking cough only</li>
-    <li>B. Stridor only with agitation</li>
-    <li>C. Stridor at rest with retractions</li>
-    <li>D. Mild hoarseness</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Stridor at rest with retractions signals severe airway obstruction.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 41 -->
-<div class="question">
-  <h3>Question 41</h3>
-  <p><strong>Objective(s) assessed:</strong> Strep complications</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Untreated streptococcal pharyngitis may result in:</p>
-
-  <ul>
-    <li>A. Myocarditis</li>
-    <li>B. Rheumatic fever</li>
-    <li>C. Viral pneumonia</li>
-    <li>D. Asthma</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Acute rheumatic fever is a delayed immune-mediated complication of GABHS.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 42 -->
-<div class="question">
-  <h3>Question 42</h3>
-  <p><strong>Objective(s) assessed:</strong> Tonsillectomy indications</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Tonsillectomy is indicated for recurrent infections defined as:</p>
-
-  <ul>
-    <li>A. 2 infections per year</li>
-    <li>B. 5 infections in one lifetime</li>
-    <li>C. 7 infections in one year</li>
-    <li>D. Any severe infection</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Standard criteria include ≥7 infections in one year or repeated multi-year patterns.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 43 -->
-<div class="question">
-  <h3>Question 43</h3>
-  <p><strong>Objective(s) assessed:</strong> PTA voice changes</p>
-  <p class="objective-code">ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  The characteristic voice change in peritonsillar abscess is described as:</p>
-
-  <ul>
-    <li>A. Hoarse</li>
-    <li>B. Nasal</li>
-    <li>C. Hot potato</li>
-    <li>D. Whispered</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    A muffled “hot potato” voice is classic due to oropharyngeal swelling.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 44 -->
-<div class="question">
-  <h3>Question 44</h3>
-  <p><strong>Objective(s) assessed:</strong> Airway foreign body complications</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  A retained airway foreign body may lead to:</p>
-
-  <ul>
-    <li>A. Bronchiectasis</li>
-    <li>B. Otitis externa</li>
-    <li>C. Sinusitis</li>
-    <li>D. Laryngitis</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> A</p>
-  <p class="explanation">
-    Chronic obstruction can cause recurrent infections and bronchiectasis.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 45 -->
-<div class="question">
-  <h3>Question 45</h3>
-  <p><strong>Objective(s) assessed:</strong> Epiglottitis epidemiology</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  The incidence of pediatric epiglottitis has decreased primarily due to:</p>
-
-  <ul>
-    <li>A. Antibiotic use</li>
-    <li>B. Hib vaccination</li>
-    <li>C. Improved imaging</li>
-    <li>D. Reduced smoking</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Widespread Hib vaccination significantly reduced epiglottitis incidence.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 46 -->
-<div class="question">
-  <h3>Question 46</h3>
-  <p><strong>Objective(s) assessed:</strong> Croup imaging findings</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  The classic radiographic finding in croup is:</p>
-
-  <ul>
-    <li>A. Thumbprint sign</li>
-    <li>B. Steeple sign</li>
-    <li>C. Air-fluid level</li>
-    <li>D. Mediastinal widening</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    The steeple sign reflects subglottic airway narrowing.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 47 -->
-<div class="question">
-  <h3>Question 47</h3>
-  <p><strong>Objective(s) assessed:</strong> Acute laryngitis prognosis</p>
-  <p class="objective-code">ENT-O&L-2</p>
-
-  <p><strong>Stem:</strong><br>
-  Typical duration of acute laryngitis is:</p>
-
-  <ul>
-    <li>A. 1–2 days</li>
-    <li>B. Less than 3 weeks</li>
-    <li>C. 2–3 months</li>
-    <li>D. Lifelong</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Acute laryngitis is self-limited, typically resolving within 3 weeks.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 48 -->
-<div class="question">
-  <h3>Question 48</h3>
-  <p><strong>Objective(s) assessed:</strong> Hoarseness red flags</p>
-  <p class="objective-code">ENT-O&L-3</p>
-
-  <p><strong>Stem:</strong><br>
-  Which symptom accompanying hoarseness is most concerning?</p>
-
-  <ul>
-    <li>A. Mild sore throat</li>
-    <li>B. Persistent dysphagia</li>
-    <li>C. Recent URI</li>
-    <li>D. Voice fatigue</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    Dysphagia with hoarseness raises concern for malignancy.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 49 -->
-<div class="question">
-  <h3>Question 49</h3>
-  <p><strong>Objective(s) assessed:</strong> Differential diagnosis integration</p>
-  <p class="objective-code">ENT-O&L-1, ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  A patient presents with sore throat, unilateral neck swelling, fever, and trismus.
-  What diagnosis must not be missed?</p>
-
-  <ul>
-    <li>A. Viral pharyngitis</li>
-    <li>B. Peritonsillar abscess</li>
-    <li>C. Acute laryngitis</li>
-    <li>D. Allergic rhinitis</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> B</p>
-  <p class="explanation">
-    PTA can rapidly progress and compromise the airway if untreated.
-  </p>
-</div>
-
-<hr>
-
-<!-- QUESTION 50 -->
-<div class="question">
-  <h3>Question 50</h3>
-  <p><strong>Objective(s) assessed:</strong> Integrated airway emergencies</p>
-  <p class="objective-code">ENT-O&L-4</p>
-
-  <p><strong>Stem:</strong><br>
-  Across deep neck infections, what is always the first priority?</p>
-
-  <ul>
-    <li>A. Broad-spectrum antibiotics</li>
-    <li>B. Imaging</li>
-    <li>C. Airway assessment and protection</li>
-    <li>D. Surgical consultation</li>
-  </ul>
-
-  <p><strong>Correct answer:</strong> C</p>
-  <p class="explanation">
-    Airway compromise is the most immediate life-threatening risk in deep neck infections.
-  </p>let currentIndex = 0;
+    // 1–6: Differential sore throat (ENT-O&L-1 / ENT-O&L-4)
+    {
+      q: "[ENT-O&L-1] A 22-year-old presents with sore throat, rhinorrhea, cough, and conjunctivitis. Exam shows mild erythema with scant exudate. Which diagnosis is most likely?",
+      choices: ["Streptococcal pharyngitis/tonsillitis", "EBV pharyngitis/tonsillitis", "Viral pharyngitis", "Diphtheria"],
+      correct: 2,
+      explanation: "Viral pharyngitis commonly presents with URI symptoms (cough/rhinorrhea/conjunctivitis). Strep typically has minimal URI symptoms."
+    },
+    {
+      q: "[ENT-O&L-1] A 35-year-old has chronic sore throat and frequent throat clearing, worse after meals and when lying down. No fever. Which noninfectious cause is most likely?",
+      choices: ["GERD/LPR", "Peritonsillar abscess", "Epiglottitis", "Retropharyngeal abscess"],
+      correct: 0,
+      explanation: "Reflux (GERD/LPR) is a common noninfectious contributor to chronic throat symptoms."
+    },
+    {
+      q: "[ENT-O&L-1] A 28-year-old has sore throat with white plaques on the tongue and buccal mucosa that scrape off and leave an erythematous base. Which diagnosis fits best?",
+      choices: ["Candidiasis", "Diphtheria", "Streptococcal pharyngitis", "Tonsilloliths"],
+      correct: 0,
+      explanation: "Scrapable white plaques suggest oral candidiasis; diphtheria pseudomembrane is typically adherent and bleeds if removed."
+    },
+    {
+      q: "[ENT-O&L-1] A 19-year-old has sore throat plus painful vesicular lesions on the lips and oral mucosa. Which etiology is most likely?",
+      choices: ["HSV", "GABHS", "EBV", "Diphtheria"],
+      correct: 0,
+      explanation: "Herpes simplex can cause painful vesicular lesions and odynophagia."
+    },
+    {
+      q: "[ENT-O&L-1] A child presents with sore throat and oral ulcers plus a rash on the hands and feet. Which condition is most likely?",
+      choices: ["Hand-foot-mouth disease", "Diphtheria", "Epiglottitis", "Ludwig angina"],
+      correct: 0,
+      explanation: "Hand-foot-mouth disease classically causes oral lesions plus hand/foot rash."
+    },
+    {
+      q: "[ENT-O&L-4] A patient with sore throat reports a “foreign body” sensation and foul breath. Exam shows a small white/yellow concretion in a tonsillar crypt. Diagnosis?",
+      choices: ["Tonsillolith", "Peritonsillar abscess", "Retropharyngeal abscess", "Diphtheria"],
+      correct: 0,
+      explanation: "Tonsilloliths (tonsil stones) can cause halitosis and foreign-body sensation."
+    },
+
+    // 7–15: Strep pharyngitis/tonsillitis (ENT-O&L-2 / ENT-O&L-4)
+    {
+      q: "[ENT-O&L-2] A 16-year-old has sudden sore throat, high fever, odynophagia, tender anterior cervical lymphadenopathy, and minimal rhinorrhea. Most likely diagnosis?",
+      choices: ["Viral pharyngitis", "Streptococcal pharyngitis/tonsillitis", "EBV pharyngitis/tonsillitis", "Allergic rhinitis with postnasal drip"],
+      correct: 1,
+      explanation: "Strep pharyngitis commonly has sudden onset, fever, tender anterior cervical nodes, and minimal URI symptoms."
+    },
+    {
+      q: "[ENT-O&L-2] Which exam finding is described as common in streptococcal pharyngitis/tonsillitis in the lecture?",
+      choices: ["Palatal petechiae", "Diffuse wheezing", "Trismus with uvular deviation", "Tripod positioning with drooling"],
+      correct: 0,
+      explanation: "Palatal petechiae are noted as a common finding in strep pharyngitis/tonsillitis."
+    },
+    {
+      q: "[ENT-O&L-2] A patient has a negative rapid antigen strep test but persistent high suspicion for GABHS. What is the recommended next step?",
+      choices: ["No further testing", "Standard throat culture", "Empiric antivirals", "CT neck with contrast"],
+      correct: 1,
+      explanation: "When rapid testing is negative, a standard throat culture should be obtained."
+    },
+    {
+      q: "[ENT-O&L-2] The lecture notes the rapid strep test has which typical performance characteristics?",
+      choices: ["Sensitivity 70–90% and specificity 90–100%", "Sensitivity 95–99% and specificity 60–70%", "Sensitivity 40–50% and specificity 40–50%", "Sensitivity 99% and specificity 99%"],
+      correct: 0,
+      explanation: "Rapid antigen detection is described as sensitivity ~70–90% and specificity ~90–100%."
+    },
+    {
+      q: "[ENT-O&L-2] First-line antibiotic option(s) for confirmed GABHS pharyngitis in the lecture includes:",
+      choices: ["Penicillin VK or amoxicillin for 10 days", "Doxycycline for 5 days", "Levofloxacin for 3 days", "Clindamycin only (always)"],
+      correct: 0,
+      explanation: "First-line therapy is penicillin-class therapy (penicillin VK or amoxicillin) for 10 days."
+    },
+    {
+      q: "[ENT-O&L-2] A single-dose IM option described as effective for GABHS pharyngitis is:",
+      choices: ["IM bicillin (penicillin G benzathine) x1", "IM ceftriaxone x1", "IM vancomycin x1", "IM gentamicin x1"],
+      correct: 0,
+      explanation: "IM penicillin G benzathine (Bicillin) x1 is described as effective."
+    },
+    {
+      q: "[ENT-O&L-2] A patient with true penicillin allergy needs treatment for confirmed strep pharyngitis. Which medication class is listed as an alternative?",
+      choices: ["Macrolides (e.g., azithromycin/clarithromycin)", "Topical antifungals", "Antivirals", "Proton pump inhibitors"],
+      correct: 0,
+      explanation: "Macrolides are listed as alternatives for penicillin-allergic patients (along with select cephalosporins and clindamycin)."
+    },
+    {
+      q: "[ENT-O&L-2] According to the lecture, patients may return to work or school after how long on antibiotics for strep pharyngitis?",
+      choices: ["After 24 hours", "After 72 hours", "After 7 days", "Only after completing the full 10-day course"],
+      correct: 0,
+      explanation: "The lecture notes return to work/school 24 hours after initiating antibiotic therapy."
+    },
+    {
+      q: "[ENT-O&L-2] Scarlet fever associated with strep throat is due to:",
+      choices: ["Pyrogenic exotoxin from GABHS", "EBV-related immune complexes", "Diphtheria toxin", "Viral cytopathic effect"],
+      correct: 0,
+      explanation: "Scarlet fever is described as resulting from pyrogenic exotoxin released by GABHS."
+    },
+
+    // 16–20: EBV pharyngitis/tonsillitis (ENT-O&L-2 / ENT-O&L-4)
+    {
+      q: "[ENT-O&L-4] A 19-year-old has fatigue, sore throat, posterior cervical lymphadenopathy, and splenomegaly. Most likely diagnosis?",
+      choices: ["Streptococcal pharyngitis", "EBV infectious mononucleosis", "Diphtheria", "Croup"],
+      correct: 1,
+      explanation: "EBV mono classically presents with fatigue, posterior cervical lymphadenopathy, and splenomegaly."
+    },
+    {
+      q: "[ENT-O&L-2] Which lab pattern most supports EBV mono in a symptomatic patient?",
+      choices: ["Lymphocytosis", "Marked neutrophilia with left shift", "Severe thrombocytopenia as the hallmark", "Isolated elevated procalcitonin"],
+      correct: 0,
+      explanation: "EBV commonly produces lymphocytosis."
+    },
+    {
+      q: "[ENT-O&L-2] A patient with suspected EBV is given amoxicillin and then develops a diffuse maculopapular rash. Best interpretation?",
+      choices: ["This is a classic EBV-associated drug rash (not necessarily a true allergy)", "This confirms diphtheria", "This proves the diagnosis is strep pharyngitis", "This indicates anaphylaxis and mandates lifelong avoidance of all beta-lactams"],
+      correct: 0,
+      explanation: "A rash after aminopenicillins is classically associated with EBV and does not automatically equal a true IgE allergy."
+    },
+    {
+      q: "[ENT-O&L-2] A 20-year-old athlete is diagnosed with EBV mono. Best counseling regarding contact sports?",
+      choices: ["Avoid contact sports for a period due to splenic rupture risk", "Return the next day if afebrile", "Return once sore throat resolves", "Return immediately with NSAIDs"],
+      correct: 0,
+      explanation: "EBV can cause splenomegaly and risk of splenic rupture; contact sports should be avoided for a period."
+    },
+    {
+      q: "[ENT-O&L-4] A 21-year-old with sore throat and diffuse adenopathy also has prominent fatigue and posterior cervical nodes. Which feature favors EBV over strep?",
+      choices: ["Posterior cervical lymphadenopathy", "Tender anterior cervical lymphadenopathy", "Absence of cough", "Palatal petechiae"],
+      correct: 0,
+      explanation: "Posterior cervical lymphadenopathy and fatigue are classic for EBV."
+    },
+
+    // 21–26: Peritonsillar abscess (ENT-O&L-2 / ENT-O&L-4)
+    {
+      q: "[ENT-O&L-4] A patient has unilateral severe sore throat, trismus, muffled “hot potato” voice, and uvular deviation. Diagnosis?",
+      choices: ["Peritonsillar abscess", "Viral pharyngitis", "Croup", "Allergic rhinitis with postnasal drip"],
+      correct: 0,
+      explanation: "Uvular deviation + trismus + hot potato voice is classic for peritonsillar abscess."
+    },
+    {
+      q: "[ENT-O&L-2] Definitive management for most peritonsillar abscess cases includes:",
+      choices: ["Needle aspiration or incision & drainage plus appropriate therapy", "Observation only", "Topical antifungal therapy", "Avoiding oral intake for 24 hours only"],
+      correct: 0,
+      explanation: "Drainage is commonly required; PTA can progress and cause complications."
+    },
+    {
+      q: "[ENT-O&L-4] A patient with suspected PTA is drooling and looks toxic. What is the most immediate concern?",
+      choices: ["Airway compromise", "Otitis externa", "Eczema flare", "Renal colic"],
+      correct: 0,
+      explanation: "Deep oropharyngeal infections can threaten the airway; airway assessment is priority when severe."
+    },
+    {
+      q: "[ENT-O&L-2] Which symptom is most characteristic of peritonsillar abscess compared with uncomplicated tonsillitis?",
+      choices: ["Trismus", "Mild rhinorrhea", "Conjunctivitis", "Diffuse wheezing"],
+      correct: 0,
+      explanation: "Trismus is a key distinguishing feature of PTA."
+    },
+    {
+      q: "[ENT-O&L-2] A serious potential complication emphasized with abscesses of the oropharynx includes extension and vascular involvement. Which is most worrisome?",
+      choices: ["Erosion into major vessels / severe complications", "Seasonal allergies", "Benign positional vertigo", "Migraine aura"],
+      correct: 0,
+      explanation: "Deep space infections can extend and cause severe complications; prompt treatment is emphasized."
+    },
+    {
+      q: "[ENT-O&L-4] After treatment for PTA, a patient worsens with neck stiffness and systemic symptoms. Which complication should be considered?",
+      choices: ["Deep neck space infection extension (e.g., retropharyngeal involvement)", "Otitis externa", "Conjunctivitis", "Carpal tunnel syndrome"],
+      correct: 0,
+      explanation: "Worsening systemic/neck symptoms after PTA raises concern for extension into deeper spaces."
+    },
+
+    // 27–31: Retropharyngeal abscess (ENT-O&L-2 / ENT-O&L-4)
+    {
+      q: "[ENT-O&L-4] A 3-year-old presents with fever, drooling, refusal to eat, and neck stiffness. Most concerning diagnosis?",
+      choices: ["Retropharyngeal abscess", "Viral laryngitis", "Allergic rhinitis", "TMJ disorder"],
+      correct: 0,
+      explanation: "Retropharyngeal abscess can present with fever, drooling, neck stiffness, and is an emergency."
+    },
+    {
+      q: "[ENT-O&L-2] Best imaging study to evaluate suspected retropharyngeal abscess extent?",
+      choices: ["CT neck with contrast", "Non-contrast head CT", "KUB X-ray", "DEXA scan"],
+      correct: 0,
+      explanation: "CT neck with contrast helps identify abscess location and extent."
+    },
+    {
+      q: "[ENT-O&L-4] A child with sore throat and drooling appears toxic. You suspect a deep neck infection. First priority?",
+      choices: ["Airway assessment and protection", "Send home with oral fluids", "Start PT for neck range of motion", "Order outpatient allergy testing"],
+      correct: 0,
+      explanation: "Deep neck infections can compromise the airway; airway comes first."
+    },
+    {
+      q: "[ENT-O&L-2] A key feature that increases concern for a deep neck infection rather than uncomplicated viral pharyngitis is:",
+      choices: ["Neck stiffness with drooling", "Cough and rhinorrhea", "Mild sore throat with normal appetite", "Conjunctivitis without fever"],
+      correct: 0,
+      explanation: "Neck stiffness and drooling suggest more serious pathology such as deep space infection."
+    },
+    {
+      q: "[ENT-O&L-4] After a URI, a child develops fever and limited neck extension with muffled voice and drooling. Most appropriate disposition?",
+      choices: ["Urgent evaluation in ED for imaging/airway monitoring", "Routine follow-up in 2 weeks", "Home supportive care only", "Start oral antihistamine and discharge"],
+      correct: 0,
+      explanation: "This presentation is concerning for retropharyngeal abscess and needs urgent workup and monitoring."
+    },
+
+    // 32–36: Croup (laryngotracheobronchitis) (ENT-O&L-2 / ENT-O&L-4)
+    {
+      q: "[ENT-O&L-4] A toddler has barking cough, inspiratory stridor, and symptoms worse at night. Most likely diagnosis?",
+      choices: ["Viral croup", "Epiglottitis", "Peritonsillar abscess", "Diphtheria"],
+      correct: 0,
+      explanation: "Barking cough + nighttime worsening + stridor strongly suggests croup."
+    },
+    {
+      q: "[ENT-O&L-2] Which treatment is commonly used to reduce symptom severity in croup?",
+      choices: ["Single-dose dexamethasone", "Routine antibiotics for all cases", "Daily warfarin", "IV antifungals"],
+      correct: 0,
+      explanation: "Steroids (e.g., dexamethasone) are commonly used to reduce airway inflammation in croup."
+    },
+    {
+      q: "[ENT-O&L-4] A child with croup has stridor at rest with retractions. Next best step?",
+      choices: ["Nebulized epinephrine and close observation", "Discharge without treatment", "Start penicillin VK", "Immediate tonsillectomy"],
+      correct: 0,
+      explanation: "Severe croup (stridor at rest) is treated with nebulized epinephrine plus steroids and observation."
+    },
+    {
+      q: "[ENT-O&L-2] Which finding best suggests severe (rather than mild) croup?",
+      choices: ["Stridor at rest with retractions", "Barking cough only", "Mild hoarseness only", "Symptoms only when running around"],
+      correct: 0,
+      explanation: "Stridor at rest with increased work of breathing indicates severity."
+    },
+    {
+      q: "[ENT-O&L-4] A child is stable but has classic croup. Parent asks about typical course. Best response?",
+      choices: ["It often improves with supportive care and anti-inflammatory treatment; monitor for worsening work of breathing", "It always requires IV antibiotics", "It is a surgical emergency", "It is best treated with antifungals"],
+      correct: 0,
+      explanation: "Croup is commonly viral and managed with supportive care; treat airway inflammation and watch for worsening."
+    },
+
+    // 37–41: Epiglottitis (ENT-O&L-2 / ENT-O&L-4)
+    {
+      q: "[ENT-O&L-4] A febrile child is sitting upright, leaning forward, drooling, and has a muffled voice. Most likely diagnosis?",
+      choices: ["Epiglottitis", "Croup", "Viral pharyngitis", "Allergic rhinitis"],
+      correct: 0,
+      explanation: "Drooling + tripod position + muffled voice is classic for epiglottitis."
+    },
+    {
+      q: "[ENT-O&L-2] In suspected epiglottitis, what should be avoided if it may agitate the patient and worsen airway obstruction?",
+      choices: ["Unnecessary throat manipulation/exam that could provoke airway compromise", "Supplemental oxygen", "Calling for help", "Airway planning"],
+      correct: 0,
+      explanation: "Agitation and throat manipulation can precipitate sudden airway obstruction in epiglottitis."
+    },
+    {
+      q: "[ENT-O&L-4] Most dangerous complication of epiglottitis is:",
+      choices: ["Acute airway obstruction", "Otitis externa", "Allergic conjunctivitis", "Tension headache"],
+      correct: 0,
+      explanation: "Epiglottitis can rapidly progress to airway obstruction and death if not managed urgently."
+    },
+    {
+      q: "[ENT-O&L-2] A vaccinated child still develops epiglottitis-like presentation. Best next step?",
+      choices: ["Treat as an airway emergency and stabilize airway before diagnostics", "Send home with oral fluids", "Start OTC antihistamines only", "Order outpatient voice therapy"],
+      correct: 0,
+      explanation: "Regardless of vaccine status, suspected epiglottitis is an airway emergency."
+    },
+    {
+      q: "[ENT-O&L-4] Which clinical clue more strongly favors epiglottitis over croup?",
+      choices: ["Drooling and preference to sit forward", "Barking cough", "Symptoms worse at night", "Hoarse voice after URI"],
+      correct: 0,
+      explanation: "Drooling and tripod positioning point to epiglottitis; barking cough/night worsening points to croup."
+    },
+
+    // 42–46: Airway foreign body (ENT-O&L-2 / ENT-O&L-4)
+    {
+      q: "[ENT-O&L-4] A toddler suddenly starts coughing and develops unilateral wheezing after eating peanuts. Most likely diagnosis?",
+      choices: ["Airway foreign body", "Viral pharyngitis", "Peritonsillar abscess", "Diphtheria"],
+      correct: 0,
+      explanation: "Sudden coughing after eating and unilateral wheeze strongly suggests aspiration."
+    },
+    {
+      q: "[ENT-O&L-2] Which prevention counseling is specifically emphasized for choking hazards in young children?",
+      choices: ["Avoid small toys/parts and supervise eating; discourage running/playing while chewing", "Avoid all dairy products", "Give antibiotics before meals", "Use hearing protection at school"],
+      correct: 0,
+      explanation: "The lecture emphasizes age-appropriate foods/toys and supervision; discourage talking/running while chewing."
+    },
+    {
+      q: "[ENT-O&L-2] A child has suspected airway foreign body but chest X-ray is normal. Best next step if suspicion remains high?",
+      choices: ["Proceed with airway evaluation (e.g., bronchoscopy/ENT/airway specialist evaluation)", "Assume it is viral and discharge", "Start antifungal therapy", "Order TSH and recheck in 6 months"],
+      correct: 0,
+      explanation: "A normal X-ray does not exclude foreign body (radiolucent objects). High suspicion warrants definitive airway evaluation."
+    },
+    {
+      q: "[ENT-O&L-4] A parent reports the child was playing with a small battery and then suddenly coughed/choked. What makes this especially urgent?",
+      choices: ["Batteries are high-risk foreign bodies and require urgent evaluation", "Batteries cause only mild symptoms", "It can wait for a routine clinic appointment", "It is best treated with oral antihistamines"],
+      correct: 0,
+      explanation: "Batteries are high-risk and require urgent evaluation due to potential severe injury."
+    },
+    {
+      q: "[ENT-O&L-4] A child has recurrent pneumonia in the same lobe and chronic cough. One possible missed diagnosis from the lecture topic list is:",
+      choices: ["Retained airway foreign body", "Allergic conjunctivitis", "Carpal tunnel syndrome", "Tinea pedis"],
+      correct: 0,
+      explanation: "A retained foreign body can cause recurrent infection and chronic cough/wheeze."
+    },
+
+    // 47–50: Ludwig angina + Laryngitis/Hoarseness + Diphtheria (ENT-O&L-2 / ENT-O&L-3 / ENT-O&L-4)
+    {
+      q: "[ENT-O&L-4] A patient develops rapidly progressive submandibular swelling after a dental infection with drooling and tongue elevation. First priority?",
+      choices: ["Immediate airway assessment/protection", "Rapid strep test", "Topical antifungal therapy", "Reassurance and discharge"],
+      correct: 0,
+      explanation: "Ludwig angina is a deep neck infection with life-threatening airway compromise risk—airway comes first."
+    },
+    {
+      q: "[ENT-O&L-3] Hoarseness is best defined as:",
+      choices: ["An abnormal change in the voice (breathy/raspy/strained or pitch/volume change)", "Any sore throat with fever", "Any cough lasting >2 weeks", "Any nasal congestion"],
+      correct: 0,
+      explanation: "The lecture defines hoarseness as an abnormal change in voice quality (breathy/raspy/strained or pitch/volume change)."
+    },
+    {
+      q: "[ENT-O&L-3] The most common cause of hoarseness noted in the lecture is:",
+      choices: ["Acute laryngitis (often viral)", "Epiglottitis", "Diphtheria", "Retropharyngeal abscess"],
+      correct: 0,
+      explanation: "Acute laryngitis is cited as the most common cause of hoarseness (usually viral)."
+    },
+    {
+      q: "[ENT-O&L-3] A smoker has hoarseness lasting longer than three weeks. Next best step per the lecture?",
+      choices: ["ENT consultation for flexible fiberoptic laryngoscopy (FFL)", "Ignore unless fever develops", "Empiric antibiotics for 30 days", "Start allergy shots"],
+      correct: 0,
+      explanation: "Hoarseness >3 weeks (especially in smokers) warrants ENT evaluation (FFL/videolaryngoscopy)."
+    },
+    {
+      q: "[ENT-O&L-2 / ENT-O&L-4] A patient has sore throat, cervical lymphadenopathy, and an adherent gray pseudomembrane. Most important early action?",
+      choices: ["Treat as diphtheria concern and initiate appropriate management urgently", "Give only NSAIDs and reassurance", "Start inhaled bronchodilator", "Order routine outpatient allergy testing"],
+      correct: 0,
+      explanation: "Diphtheria with pseudomembrane is dangerous; urgent management is required due to toxin-related complications."
+    }
+  ];
+
+  let currentIndex = 0;
   let score = 0;
   let answeredCount = 0;
   const userAnswers = new Array(questions.length).fill(null);
@@ -1170,7 +556,9 @@
     });
 
     const prevAnswer = userAnswers[index];
-    if (prevAnswer !== null) showResult(prevAnswer);
+    if (prevAnswer !== null) {
+      showResult(prevAnswer);
+    }
 
     prevBtn.disabled = index === 0;
     nextBtn.textContent = index === questions.length - 1 ? "Finish ⟶" : "Next ⟶";
@@ -1180,10 +568,14 @@
     if (userAnswers[currentIndex] !== null) return;
     userAnswers[currentIndex] = selectedIndex;
     answeredCount++;
-    if (selectedIndex === questions[currentIndex].correct) score++;
+    if (selectedIndex === questions[currentIndex].correct) {
+      score++;
+    }
     showResult(selectedIndex);
     updateScoreDisplay();
-    if (answeredCount === questions.length) showFinalScore();
+    if (answeredCount === questions.length) {
+      showFinalScore();
+    }
   }
 
   function showResult(selectedIndex) {
@@ -1206,7 +598,7 @@
 
   function showFinalScore() {
     const percent = Math.round((score / questions.length) * 100);
-    finalScoreEl.textContent = `Final score: ${score} / ${questions.length} (${percent}%)`;
+    finalScoreEl.textContent = `Final score: ${score} / ${questions.length} (${percent}%)\n\nTip: If you want objective codes shown on a separate line, tell me and I’ll adjust the UI + renderQuestion() in one small edit.`;
   }
 
   prevBtn.addEventListener("click", () => {
@@ -1226,6 +618,7 @@
     }
   });
 
+  // Initialize
   renderQuestion(currentIndex);
   updateScoreDisplay();
 </script>
