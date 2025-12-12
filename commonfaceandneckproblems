@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EENT – Common Face & Neck Problems Quiz</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    .container {
+      max-width: 900px;
+      margin: 36px auto;
+      padding: 24px 28px 32px;
+      background: #020617;
+      border-radius: 16px;
+      box-shadow: 0 18px 45px rgba(15,23,42,0.85);
+      border: 1px solid #1f2937;
+    }
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 2rem;
+    }
+    .meta {
+      text-align: center;
+      margin-bottom: 12px;
+      color: #9ca3af;
+      font-size: 0.95rem;
+    }
+    #question-number {
+      font-weight: 600;
+    }
+    #question-text {
+      font-size: 1.05rem;
+      margin: 18px 0 14px;
+      line-height: 1.45;
+    }
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .choice-btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #020617;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s, transform 0.05s, box-shadow 0.15s;
+      font-size: 0.97rem;
+      color: #e5e7eb;
+      box-shadow: 0 8px 20px rgba(15,23,42,0.75);
+    }
+    .choice-btn:hover {
+      background: #111827;
+      border-color: #4b5563;
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(15,23,42,0.9);
+    }
+    .choice-btn.correct {
+      background: #064e3b;
+      border-color: #34d399;
+    }
+    .choice-btn.incorrect {
+      background: #7f1d1d;
+      border-color: #f87171;
+    }
+    .choice-btn.disabled {
+      pointer-events: none;
+      opacity: 0.96;
+    }
+    #feedback {
+      min-height: 40px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.96rem;
+      background: #020617;
+      border-left: 4px solid transparent;
+    }
+    #feedback.correct {
+      border-left-color: #22c55e;
+      background: rgba(22,163,74,0.12);
+    }
+    #feedback.incorrect {
+      border-left-color: #f97373;
+      background: rgba(185,28,28,0.14);
+    }
+    #explanation {
+      margin-top: 4px;
+      color: #d1d5db;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button.nav-btn {
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: #4c6fff;
+      color: white;
+      box-shadow: 0 8px 20px rgba(37,99,235,0.7);
+      transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    button.nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    button.nav-btn:hover:not(:disabled) {
+      background: #3b5af8;
+    }
+    button.nav-btn:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 5px 14px rgba(37,99,235,0.8);
+    }
+    #score-display {
+      font-size: 0.9rem;
+      color: #cbd5f5;
+    }
+    #final-score {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #1f2937;
+      font-weight: 600;
+      text-align: center;
+    }
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #111827;
+      color: #a5b4fc;
+      font-size: 0.8rem;
+      margin-top: 6px;
+    }
+    @media (max-width: 640px) {
+      .container {
+        margin: 16px;
+        padding: 20px 18px 24px;
+      }
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #score-display {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>EENT – Common Face &amp; Neck Problems</h1>
+  <div class="meta">
+    Quiz based on the “Common Face &amp; Neck Problems” lecture slides.<br>
+    <span id="question-number"></span> · <span id="progress"></span>
+    <div class="pill">36 MCQs · Neck masses, cysts, TMJ, salivary disease</div>
+  </div>
+
+  <div id="question-text"></div>
+  <div class="choices" id="choices-container"></div>
+
+  <div id="feedback">
+    <span id="feedback-label"></span>
+    <div id="explanation"></div>
+  </div>
+
+  <div class="controls">
+    <button class="nav-btn" id="prev-btn">⟵ Previous</button>
+    <div id="score-display">Score: 0 / 0</div>
+    <button class="nav-btn" id="next-btn">Next ⟶</button>
+  </div>
+
+  <div id="final-score"></div>
+</div>
+
+<script>
+  const questions = [
+    // 1 – Neck mass evaluation & differential
+    {
+      q: "A 45-year-old man presents with a painless right neck mass that has been present for six weeks. He smokes one pack per day and drinks alcohol daily. On exam, the mass is firm, 2 cm, and fixed to underlying tissues. Which of the following is the most appropriate next diagnostic step?",
+      choices: [
+        "Empiric oral antibiotics and re-evaluate in 4–6 weeks",
+        "CT scan of the head and neck with contrast",
+        "Observation only because it is painless",
+        "Neck ultrasound without further workup"
+      ],
+      correct: 1,
+      explanation:
+        "In adults, a neck mass present for >2 weeks, >1.5 cm, firm, and fixed—especially with tobacco/alcohol use—is suspicious for malignancy. CT neck with contrast is the first-line imaging study in adults."
+    },
+    {
+      q: "Which historical feature most strongly suggests an inflammatory/infectious rather than malignant cause of cervical lymphadenopathy?",
+      choices: [
+        "Mass present for several months without change",
+        "Firm, nontender, and fixed lymph node in a 60-year-old",
+        "Acute onset of tender, warm lymph node following a URI",
+        "Mass in a patient with a history of head and neck skin cancer"
+      ],
+      correct: 2,
+      explanation:
+        "Infectious lymphadenopathy typically develops over days to weeks after an inciting infection and is painful, erythematous, and warm. Chronic, nontender, fixed nodes in older patients are more concerning for malignancy."
+    },
+    {
+      q: "In evaluating a neck mass, which of the following sets of laboratory tests is most appropriate initial screening when an inflammatory or systemic cause is suspected?",
+      choices: [
+        "Serum amylase, lipase, and liver function tests",
+        "CBC with differential, ESR/CRP, EBV/CMV serology, HIV testing",
+        "D-dimer, PT/INR, and fibrinogen",
+        "Random cortisol, ACTH, and TSH"
+      ],
+      correct: 1,
+      explanation:
+        "The lecture lists CBC with diff, ESR/CRP, EBV/CMV, HIV, TB testing, ANA, and SSA/SSB as appropriate lab evaluation when infection, autoimmune, or systemic disease is suspected."
+    },
+    {
+      q: "Which constellation of features is MOST suspicious for a malignant neck mass requiring expedited workup?",
+      choices: [
+        "Tender 1 cm node present for 4 days in a 10-year-old with sore throat",
+        "Soft, mobile midline cyst in a 12-year-old that moves with swallowing",
+        "Firm 2 cm node present for 3 weeks in a 55-year-old with weight loss and hoarseness",
+        "Soft compressible bluish lesion present since infancy that enlarges when crying"
+      ],
+      correct: 2,
+      explanation:
+        "Age >40, node >1.5 cm, duration >2 weeks, firm/fixed quality, and associated symptoms like hoarseness and weight loss are red flags for malignancy."
+    },
+    {
+      q: "A 30-year-old woman presents with a fluctuant, tender neck mass that developed over 3 days after she manipulated a 'pimple' on her chin. She is febrile and tachycardic. What is the primary diagnostic priority in this patient?",
+      choices: [
+        "Rule out underlying congenital cyst",
+        "Exclude bacterial infection and abscess formation",
+        "Screen for autoimmune disease",
+        "Evaluate for paraganglioma"
+      ],
+      correct: 1,
+      explanation:
+        "In the evaluation of a neck mass, the first priorities are to exclude or treat bacterial infection and then exclude malignancy. The acute, tender, febrile presentation suggests suppurative lymphadenitis or abscess."
+    },
+    {
+      q: "Which physical exam maneuver is particularly important for characterizing a neck mass according to the lecture?",
+      choices: [
+        "Measuring pupillary light reflex",
+        "Assessing size, tenderness, texture, and mobility of the mass",
+        "Testing lower extremity reflexes",
+        "Measuring calf circumference bilaterally"
+      ],
+      correct: 1,
+      explanation:
+        "Mass characteristics—including size, tenderness, texture, and mobility—are key components of the neck mass exam and help guide the differential diagnosis."
+    },
+    {
+      q: "A 50-year-old man with a new neck mass is noted to have multiple enlarged supraclavicular nodes. This finding is particularly concerning because those nodes often drain which anatomic regions?",
+      choices: [
+        "Face and scalp only",
+        "Lower extremities",
+        "Thorax and abdomen",
+        "Upper extremities"
+      ],
+      correct: 2,
+      explanation:
+        "Enlargement of supraclavicular lymph nodes can reflect disease in the thorax or abdomen and is a worrisome sign for metastatic malignancy."
+    },
+    {
+      q: "Fine-needle aspiration (FNA) of a neck mass is most appropriately used for which of the following purposes?",
+      choices: [
+        "Definitive excision of congenital cysts",
+        "Initial evaluation of suspected metastatic or lymphoma-related nodes",
+        "Screening for carotid artery stenosis",
+        "Treatment of reactive viral lymphadenopathy"
+      ],
+      correct: 1,
+      explanation:
+        "FNA is a minimally invasive way to obtain cytology from suspicious nodes or masses and is used to evaluate possible metastases or lymphoma; it is not definitive treatment for congenital cysts or viral nodes."
+    },
+
+    // 9–12 Thyroglossal duct cyst
+    {
+      q: "A 9-year-old boy presents with a painless midline neck mass just below the hyoid bone. The mass moves superiorly when he swallows or sticks out his tongue. He recently had a URI. What is the most likely diagnosis?",
+      choices: [
+        "Thyroglossal duct cyst",
+        "Branchial cleft cyst",
+        "Reactive lymphadenopathy",
+        "Dermoid cyst"
+      ],
+      correct: 0,
+      explanation:
+        "A midline neck mass that moves with swallowing or tongue protrusion is classic for a thyroglossal duct cyst, commonly discovered after an infection."
+    },
+    {
+      q: "Which of the following is TRUE regarding thyroglossal duct cysts in adults?",
+      choices: [
+        "Imaging is unnecessary if the mass is clearly midline",
+        "They rarely contain ectopic thyroid tissue",
+        "Fine-needle aspiration should be performed in all adults to exclude malignancy",
+        "Surgical excision should be performed while the cyst is acutely infected"
+      ],
+      correct: 2,
+      explanation:
+        "The slides recommend FNA in all adults with a thyroglossal duct cyst to rule out malignancy, and thyroid function tests because ectopic tissue is common. Surgery should not be done on an actively infected cyst."
+    },
+    {
+      q: "A 25-year-old woman has an infected thyroglossal duct cyst. Which is the BEST initial management?",
+      choices: [
+        "Immediate Sistrunk procedure",
+        "Antibiotics targeting oral flora and delay surgery until infection resolves",
+        "High-dose systemic steroids followed by surgery within 24 hours",
+        "Observation only, as most infected cysts self-resolve"
+      ],
+      correct: 1,
+      explanation:
+        "Infected thyroglossal duct cysts are treated with antibiotics (eg, cephalexin, amoxicillin-clavulanate, clindamycin) and possible drainage if needed. Definitive excision is delayed until inflammation has resolved."
+    },
+    {
+      q: "Which complication is specifically associated with thyroglossal duct cysts and is one reason for definitive surgical removal even when asymptomatic?",
+      choices: [
+        "High risk of facial nerve injury",
+        "Progression to carotid artery aneurysm",
+        "Development of carcinoma within the cyst",
+        "Transformation into a laryngocele"
+      ],
+      correct: 2,
+      explanation:
+        "Thyroglossal duct cysts are usually benign but can rarely undergo malignant transformation, so surgical excision is recommended to prevent infection and exclude cancer."
+    },
+
+    // 13–15 Branchial cleft cyst
+    {
+      q: "A 19-year-old college student presents with a tender swelling along the anterior border of the sternocleidomastoid muscle that developed after a recent URI. This is his first such episode. What is the most likely diagnosis?",
+      choices: [
+        "Second branchial cleft cyst",
+        "Thyroglossal duct cyst",
+        "Carotid body tumor",
+        "Parotid neoplasm"
+      ],
+      correct: 0,
+      explanation:
+        "Branchial cleft cysts typically present in late childhood or early adulthood after infection, as a tender inflammatory mass along the anterior border of the sternocleidomastoid."
+    },
+    {
+      q: "Which statement about management of branchial cleft cysts is most accurate?",
+      choices: [
+        "Immediate incision and drainage is preferred to prevent recurrence",
+        "Definitive treatment is excision of the cyst and tract after infection has resolved",
+        "Antibiotics are unnecessary because the lesion is always sterile",
+        "Surgery is contraindicated because of high risk of airway compromise"
+      ],
+      correct: 1,
+      explanation:
+        "Branchial cleft cysts are treated by managing infection and then surgically excising the cyst and tract. Incision and drainage is avoided when possible because it can increase recurrence."
+    },
+    {
+      q: "A 7-year-old child is found to have a lateral neck mass that has been present for years without change. It is soft and mobile and located just anterior to the sternocleidomastoid. There is no infection. Which of the following is the most appropriate counseling for the parents?",
+      choices: [
+        "This is likely malignant and requires emergent chemotherapy",
+        "This is most consistent with a branchial cleft cyst and will not recur after excision",
+        "It most likely represents a lipoma and no surgery is ever needed",
+        "It is probably a thyroglossal duct cyst and will move with swallowing"
+      ],
+      correct: 1,
+      explanation:
+        "A stable, lateral neck mass in a child at the anterior SCM border is typical of a branchial cleft cyst. After infection control (if present), surgical excision of the cyst and tract is curative but recurrence can occur if excision is incomplete."
+    },
+
+    // 16–17 Laryngocele
+    {
+      q: "A 55-year-old trumpet player presents with intermittent neck swelling that increases with Valsalva, along with hoarseness and a foreign-body sensation in the throat. CT shows an air-filled dilation originating from the laryngeal saccule extending into the neck. What is the diagnosis?",
+      choices: [
+        "Thymic cyst",
+        "Laryngocele",
+        "Laryngopyocele",
+        "Ranula"
+      ],
+      correct: 1,
+      explanation:
+        "An air-filled dilation of the laryngeal saccule that may extend beyond the larynx into the neck is a laryngocele; when infected, it is termed a laryngopyocele."
+    },
+    {
+      q: "Which patient with laryngocele requires intervention rather than observation?",
+      choices: [
+        "Asymptomatic incidental laryngocele found on imaging",
+        "Patient with hoarseness and dyspnea due to laryngocele",
+        "Patient with a stable, non-expanding air-filled lesion",
+        "All laryngoceles require emergency surgery"
+      ],
+      correct: 1,
+      explanation:
+        "Treatment for laryngocele is indicated when symptomatic—such as hoarseness, dyspnea, dysphagia, or airway compromise—and may include laryngoscopic decompression or excision."
+    },
+
+    // 18–19 Ranula
+    {
+      q: "A 17-year-old girl presents with a painless, blue, fluctuant swelling on the floor of her mouth, lateral to the midline. She reports it has slowly enlarged over several months. What is the most likely diagnosis?",
+      choices: [
+        "Plunging ranula",
+        "Mucocele of the lower lip",
+        "Ranula arising from the sublingual gland",
+        "Dermoid cyst"
+      ],
+      correct: 2,
+      explanation:
+        "A ranula is a pseudocyst from obstruction of the sublingual gland, typically presenting as a blue, fluctuant, lateral floor-of-mouth swelling that is slow-growing and painless."
+    },
+    {
+      q: "Which of the following statements regarding ranulas is TRUE?",
+      choices: [
+        "They always resolve spontaneously and should never be surgically treated",
+        "Needle aspiration alone provides definitive cure in most cases",
+        "Large plunging ranulas may present as neck masses and may require imaging prior to surgery",
+        "They arise from the parotid gland"
+      ],
+      correct: 2,
+      explanation:
+        "Plunging ranulas extend through the mylohyoid into the neck and may present as neck masses; US or CT is recommended preoperatively. Aspiration alone is not curative, and many require excision or marsupialization."
+    },
+
+    // 20–21 Teratoma
+    {
+      q: "A newborn is delivered with a large, firm anterior neck mass causing respiratory distress. Imaging shows a complex lesion containing multiple tissue types from all three germ layers. What is the most likely diagnosis?",
+      choices: [
+        "Teratoma",
+        "Hemangioma",
+        "Dermoid cyst",
+        "Thyroglossal duct cyst"
+      ],
+      correct: 0,
+      explanation:
+        "Teratomas are tumors derived from stem cells containing tissue from all three germ layers; ~3.5% occur in the head and neck and can cause airway compromise in neonates."
+    },
+    {
+      q: "Which is the primary treatment for a cervical teratoma identified in infancy?",
+      choices: [
+        "High-dose steroids",
+        "Serial observation because most regress spontaneously",
+        "Surgical excision to relieve compression and remove tumor",
+        "Radiation therapy alone"
+      ],
+      correct: 2,
+      explanation:
+        "Cervical teratomas can compress vital structures and have malignant potential; definitive management is surgical excision."
+    },
+
+    // 22–23 Dermoid cyst
+    {
+      q: "A 5-year-old girl has a midline, nontender, mobile submental mass present since infancy. It does not move with swallowing. Ultrasound shows a cyst containing heterogeneous echogenic material consistent with skin appendages. What is the most likely diagnosis?",
+      choices: [
+        "Thyroglossal duct cyst",
+        "Dermoid cyst",
+        "Reactive lymphadenopathy",
+        "Thymic cyst"
+      ],
+      correct: 1,
+      explanation:
+        "Dermoid cysts are epithelium-lined cysts containing skin structures such as hair follicles and sweat glands; they are often midline, nontender, and mobile, especially in children."
+    },
+    {
+      q: "Which complication is associated with dermoid cysts and supports the recommendation for surgical excision?",
+      choices: [
+        "High risk of acute airway obstruction",
+        "Progression to laryngocele",
+        "Bone damage or compression of nearby structures and rare malignancy",
+        "Guaranteed recurrence after removal"
+      ],
+      correct: 2,
+      explanation:
+        "Dermoid cysts may cause infection, bone damage, or compression of adjacent structures; malignant transformation is rare but possible, so surgical removal is recommended."
+    },
+
+    // 24–26 Hemangioma
+    {
+      q: "A 3-month-old premature female infant presents with a bright red, soft, compressible mass on the cheek that enlarges when she cries. The lesion has enlarged rapidly over the past month. What is the most likely diagnosis?",
+      choices: [
+        "Infantile hemangioma",
+        "Capillary malformation (port-wine stain)",
+        "Epidermoid cyst",
+        "Dermoid cyst"
+      ],
+      correct: 0,
+      explanation:
+        "Infantile hemangiomas are the most common benign tumors of childhood, particularly in the head and neck, appearing in the first months of life as red or bluish compressible masses that enlarge with crying."
+    },
+    {
+      q: "Which of the following is the preferred first-line systemic treatment for a problematic infantile hemangioma causing functional impairment?",
+      choices: [
+        "Systemic beta-blocker therapy",
+        "High-dose systemic antibiotics",
+        "Chemotherapy",
+        "Topical chlorhexidine"
+      ],
+      correct: 0,
+      explanation:
+        "The lecture notes that beta blockers are first-line therapy for infantile hemangioma when intervention is required due to complications or functional impairment."
+    },
+    {
+      q: "Most infantile hemangiomas follow which of the following natural histories?",
+      choices: [
+        "Present at birth, remain stable, and persist into adulthood without change",
+        "Develop in infancy, grow rapidly in the first year, then slowly involute over time",
+        "Appear in adolescence and are always malignant",
+        "Develop only in association with underlying vascular syndromes"
+      ],
+      correct: 1,
+      explanation:
+        "Hemangiomas typically develop within the first months of life, grow rapidly in the first year, and then undergo slow involution beginning around 18–24 months."
+    },
+
+    // 27–28 TMJ dysfunction
+    {
+      q: "A 32-year-old woman reports chronic facial pain and intermittent jaw locking, worse in the morning. She grinds her teeth at night and has a history of anxiety. Exam shows tenderness over the TMJ and masticatory muscles with crepitus on opening. What is the MOST appropriate initial management approach?",
+      choices: [
+        "Immediate surgical referral for TMJ replacement",
+        "Education on posture and habits, jaw exercises, and conservative measures such as NSAIDs",
+        "High-dose long-term opioids",
+        "Systemic corticosteroids for 6 weeks"
+      ],
+      correct: 1,
+      explanation:
+        "TMJ dysfunction is usually managed first with conservative therapy—education, habit modification, jaw exercises, sleep hygiene, physical therapy, and short-term NSAIDs or acetaminophen; surgery is reserved for refractory cases."
+    },
+    {
+      q: "Which of the following is a known risk factor or associated condition for TMJ dysfunction mentioned in the lecture?",
+      choices: [
+        "Hyperthyroidism",
+        "Rheumatoid arthritis",
+        "Ulcerative colitis",
+        "Asthma"
+      ],
+      correct: 1,
+      explanation:
+        "TMJ dysfunction is more common in patients with rheumatoid arthritis (up to 50–94%) and in those with mood, sleep, and other chronic pain disorders."
+    },
+
+    // 29–30 Reactive lymphadenopathy
+    {
+      q: "A 6-year-old boy presents with a tender, enlarged anterior cervical lymph node that appeared 4 days ago during an upper respiratory infection. He is afebrile and otherwise well. Which of the following is the BEST management?",
+      choices: [
+        "Immediate CT neck and excisional biopsy",
+        "Reassurance and observation; treat underlying infection as needed",
+        "High-dose steroids to reduce node size",
+        "Start chemotherapy for suspected lymphoma"
+      ],
+      correct: 1,
+      explanation:
+        "Reactive viral lymphadenopathy is the most common cause of cervical lymphadenopathy in children and usually resolves within 1–2 weeks after a URI; observation is appropriate unless red flags are present."
+    },
+    {
+      q: "Which feature would prompt further evaluation of lymphadenopathy rather than simple observation?",
+      choices: [
+        "Painful tender node that is decreasing in size two weeks after a URI",
+        "Firm, non-tender node persisting beyond 4–6 weeks without clear infectious cause",
+        "Bilateral small mobile nodes in a child with acute pharyngitis",
+        "Node enlargement during acute mononucleosis"
+      ],
+      correct: 1,
+      explanation:
+        "Persistent, firm, non-tender lymphadenopathy without a clear infectious etiology raises concern for malignancy or other pathology and warrants further imaging and/or biopsy."
+    },
+
+    // 31–32 Sialolithiasis
+    {
+      q: "A 50-year-old man reports recurrent episodes of painful swelling under his jaw that worsen when he eats and gradually subside afterward. On exam, the left submandibular gland is tender, and a small hard nodule is palpable in Wharton's duct. What is the most likely diagnosis?",
+      choices: [
+        "Parotitis",
+        "Sialolithiasis of the submandibular gland",
+        "TMJ dysfunction",
+        "Reactive lymphadenopathy"
+      ],
+      correct: 1,
+      explanation:
+        "Sialolithiasis presents with sudden onset salivary gland pain and swelling, often in the submandibular gland, that worsens with eating; a rock-hard mass may be palpable in the duct."
+    },
+    {
+      q: "First-line management for uncomplicated sialolithiasis includes which of the following strategies?",
+      choices: [
+        "Immediate gland excision",
+        "High-dose IV antibiotics and NPO status",
+        "Moist heat, hydration, gland massage, and sialogogues such as lemon drops",
+        "Systemic corticosteroids and strict bed rest"
+      ],
+      correct: 2,
+      explanation:
+        "Conservative therapy—moist heat, hydration, gland massage, and promotion of salivary flow—is first-line for sialolithiasis; antibiotics are used if infection is present."
+    },
+
+    // 33–34 Sialadenitis / Parotitis
+    {
+      q: "An older postoperative patient develops acute onset of painful swelling over the right parotid gland with fever and purulent drainage from Stensen's duct. What is the most likely diagnosis?",
+      choices: [
+        "Viral parotitis due to mumps",
+        "Bacterial sialadenitis of the parotid gland",
+        "Sialolithiasis of the submandibular gland",
+        "TMJ dysfunction"
+      ],
+      correct: 1,
+      explanation:
+        "Acute painful swelling, fever, and purulent drainage from the parotid duct in an older or postoperative patient is typical for bacterial sialadenitis (parotitis), often due to Staph aureus."
+    },
+    {
+      q: "Which of the following risk factors is associated with development of sialadenitis?",
+      choices: [
+        "High fluid intake and good oral hygiene",
+        "Sjogren’s syndrome causing chronic dry mouth",
+        "Hyperthyroidism",
+        "Use of beta-blockers for hemangioma"
+      ],
+      correct: 1,
+      explanation:
+        "Risk factors for sialadenitis include chronic dry mouth (eg, Sjogren’s or anticholinergic medications), malnutrition, poor oral hygiene, postoperative state, and sialolithiasis."
+    },
+
+    // 35–36 Parotitis / wrap-up
+    {
+      q: "A 12-year-old boy who is under-immunized presents with bilateral parotid swelling, fever, headache, malaise, and myalgias for two days. No purulent drainage is expressed from the ducts. What is the most likely etiology of his parotitis?",
+      choices: [
+        "Autoimmune inflammation",
+        "Mumps virus infection",
+        "Staphylococcus aureus",
+        "Influenza A–related bacterial superinfection"
+      ],
+      correct: 1,
+      explanation:
+        "The classic presentation of viral parotitis due to mumps includes bilateral parotid swelling after several days of systemic symptoms in an under-immunized child; treatment is supportive."
+    },
+    {
+      q: "Which serious complication is associated with mumps parotitis and should be discussed with families?",
+      choices: [
+        "Osteomyelitis of the mandible",
+        "Orchitis, meningitis, encephalitis, and potential deafness",
+        "Chronic TMJ ankylosis",
+        "Cervical spine instability"
+      ],
+      correct: 1,
+      explanation:
+        "The lecture highlights orchitis, meningitis, encephalitis, and deafness as important complications of mumps, emphasizing the value of vaccination and monitoring."
+    }
+  ];
+
+  let currentIndex = 0;
+  let score = 0;
+  let answeredCount = 0;
+  const userAnswers = new Array(questions.length).fill(null);
+
+  const questionNumberEl = document.getElementById("question-number");
+  const progressEl = document.getElementById("progress");
+  const questionTextEl = document.getElementById("question-text");
+  const choicesContainer = document.getElementById("choices-container");
+  const feedbackEl = document.getElementById("feedback");
+  const feedbackLabelEl = document.getElementById("feedback-label");
+  const explanationEl = document.getElementById("explanation");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const scoreDisplay = document.getElementById("score-display");
+  const finalScoreEl = document.getElementById("final-score");
+
+  function renderQuestion(index) {
+    const q = questions[index];
+    questionNumberEl.textContent = `Question ${index + 1} of ${questions.length}`;
+    progressEl.textContent = `Completed: ${answeredCount}/${questions.length}`;
+    questionTextEl.textContent = q.q;
+    choicesContainer.innerHTML = "";
+    feedbackEl.className = "";
+    feedbackLabelEl.textContent = "";
+    explanationEl.textContent = "";
+
+    q.choices.forEach((choice, i) => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn";
+      btn.textContent = String.fromCharCode(65 + i) + ". " + choice;
+      btn.addEventListener("click", () => handleAnswer(i));
+      choicesContainer.appendChild(btn);
+    });
+
+    const prevAnswer = userAnswers[index];
+    if (prevAnswer !== null) {
+      showResult(prevAnswer);
+    }
+
+    prevBtn.disabled = index === 0;
+    nextBtn.textContent = index === questions.length - 1 ? "Finish ⟶" : "Next ⟶";
+  }
+
+  function handleAnswer(selectedIndex) {
+    if (userAnswers[currentIndex] !== null) return;
+    userAnswers[currentIndex] = selectedIndex;
+    answeredCount++;
+    if (selectedIndex === questions[currentIndex].correct) {
+      score++;
+    }
+    showResult(selectedIndex);
+    updateScoreDisplay();
+    if (answeredCount === questions.length) {
+      showFinalScore();
+    }
+  }
+
+  function showResult(selectedIndex) {
+    const q = questions[currentIndex];
+    const buttons = Array.from(document.getElementsByClassName("choice-btn"));
+    buttons.forEach((btn, i) => {
+      btn.classList.add("disabled");
+      if (i === q.correct) {
+        btn.classList.add("correct");
+      }
+      if (i === selectedIndex && i !== q.correct) {
+        btn.classList.add("incorrect");
+      }
+    });
+    const wasCorrect = selectedIndex === q.correct;
+    feedbackEl.className = wasCorrect ? "correct" : "incorrect";
+    feedbackLabelEl.textContent = wasCorrect ? "Correct!" : "Incorrect.";
+    explanationEl.textContent = q.explanation;
+  }
+
+  function updateScoreDisplay() {
+    scoreDisplay.textContent = `Score: ${score} / ${answeredCount}`;
+  }
+
+  function showFinalScore() {
+    const percent = Math.round((score / questions.length) * 100);
+    finalScoreEl.textContent = `Final score: ${score} / ${questions.length} (${percent}%)`;
+  }
+
+  prevBtn.addEventListener("click", () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      renderQuestion(currentIndex);
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (currentIndex < questions.length - 1) {
+      currentIndex++;
+      renderQuestion(currentIndex);
+    } else {
+      showFinalScore();
+      finalScoreEl.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
+  // Initialize
+  renderQuestion(currentIndex);
+  updateScoreDisplay();
+</script>
+</body>
+</html>
